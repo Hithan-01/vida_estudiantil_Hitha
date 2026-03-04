@@ -1,0 +1,105 @@
+/* ─── Vida Estudiantil — overrides sobre Soft UI Design System PRO ─── */
+
+:root {
+    --color-primary: #5e72e4;
+    --color-secondary: #8392ab;
+    --color-dark: #344767;
+}
+
+body {
+    font-family: "Inter", sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* ── Navbar sticky blur ── */
+#navbarBlur {
+    background: rgba(255, 255, 255, 0.92);
+    -webkit-backdrop-filter: saturate(200%) blur(20px);
+    backdrop-filter: saturate(200%) blur(20px);
+}
+
+/* ── Secciones con padding generoso ── */
+.py-6 { padding-top: 4rem !important; padding-bottom: 4rem !important; }
+
+/* ── Texto gradiente (si Soft UI PRO no lo incluye) ── */
+.text-gradient.text-primary  { background: linear-gradient(310deg,#5e72e4,#825ee4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.text-gradient.text-info     { background: linear-gradient(310deg,#11cdef,#1171ef); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.text-gradient.text-success  { background: linear-gradient(310deg,#2dce89,#2dcecc); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.text-gradient.text-warning  { background: linear-gradient(310deg,#fb6340,#fbb140); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+
+/* ── bg-gradient-* ── */
+.bg-gradient-primary { background: linear-gradient(310deg,#5e72e4,#825ee4) !important; }
+.bg-gradient-info    { background: linear-gradient(310deg,#2152ff,#21d4fd) !important; }
+.bg-gradient-success { background: linear-gradient(310deg,#17ad37,#98ec2d) !important; }
+.bg-gradient-warning { background: linear-gradient(310deg,#f53939,#fbcf33) !important; }
+.bg-gradient-dark    { background: linear-gradient(310deg,#141727,#3a416f) !important; }
+
+/* ── Icon shape ── */
+.icon-shape {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px; height: 48px;
+    border-radius: .75rem;
+}
+.icon-shape.icon-lg { width: 58px; height: 58px; }
+
+/* ── Move on hover ── */
+.move-on-hover {
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease;
+    will-change: transform;
+}
+.move-on-hover:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 48px rgba(94,114,228,.2) !important;
+}
+
+/* ── Border-radius helpers ── */
+.border-radius-xl { border-radius: 1rem !important; }
+.border-radius-lg { border-radius: .75rem !important; }
+.border-radius-bottom-none { border-bottom-left-radius: 0 !important; border-bottom-right-radius: 0 !important; }
+
+/* ── Carousel ── */
+.carousel-item { height: 400px; }
+.carousel-item img { width: 100%; height: 100%; object-fit: cover; }
+.carousel-caption { background: rgba(0,0,0,.5); border-radius: .75rem; padding: 1rem 1.5rem; }
+
+/* ── Badge helpers ── */
+.badge.badge-sm { font-size: .7rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+
+/* ── Mask helper ── */
+.mask {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+}
+
+/* ── btn-white / btn-outline-white ── */
+.btn-white { background: #fff; color: var(--color-primary); border: none; font-weight: 700; }
+.btn-white:hover { background: #f0f2ff; color: var(--color-primary); }
+.btn-outline-white { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,.6); font-weight: 700; }
+.btn-outline-white:hover { background: rgba(255,255,255,.15); color: #fff; border-color: #fff; }
+
+/* ── Footer ── */
+.portal-footer {
+    background: var(--color-dark);
+    color: rgba(255,255,255,.7);
+    padding: 2.5rem 0 1.5rem;
+    margin-top: 0;
+}
+.portal-footer h6 { color: #fff; font-weight: 700; margin-bottom: 1rem; }
+.portal-footer a { color: rgba(255,255,255,.6); text-decoration: none; font-size: .875rem; }
+.portal-footer a:hover { color: #fff; }
+.portal-footer .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,.1);
+    padding-top: 1rem;
+    margin-top: 2rem;
+    font-size: .8rem;
+}
+
+/* ── Responsivo ── */
+@media (max-width: 768px) {
+    .display-1 { font-size: 2.5rem !important; }
+    .carousel-item { height: 240px !important; }
+    .py-6 { padding-top: 2.5rem !important; padding-bottom: 2.5rem !important; }
+}

@@ -1,0 +1,22 @@
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /cpanel/cpanel_Hithan-main/vidaEstudiantil/
+
+# Archivos y directorios reales - no reescribir
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# No tocar assets
+RewriteRule ^assets/ - [L]
+
+# Rutas amigables
+RewriteRule ^clubes/?$                    clubes.php [L]
+RewriteRule ^ministerios/?$              ministerios.php [L]
+RewriteRule ^eventos/?$                   eventos.php [L]
+RewriteRule ^club/([0-9]+)/?$            club.php?id=$1 [L,QSA]
+RewriteRule ^ministerio/([0-9]+)/?$      ministerio.php?id=$1 [L,QSA]
+
+# Raíz
+RewriteRule ^$                            index.php [L]
+</IfModule>
