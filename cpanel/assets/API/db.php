@@ -1,0 +1,35 @@
+<?php
+class Conexion extends mysqli {
+    public $mostrarErrores = TRUE;
+
+    public function __construct(){
+        parent::__construct('localhost','root','','pruebasumadmin');
+
+        if ($this->connect_errno) {
+            die("❌ Error de conexión: " . $this->connect_error);
+        }
+    }
+
+    public function recorrer($y){
+        return mysqli_fetch_array($y);
+    }
+
+    public function rows($y){
+        return mysqli_num_rows($y);
+    }
+}
+
+function security() {
+    if (isset($_COOKIE['system_name']) && isset($_COOKIE["system_token"])) {
+        $db = new Conexion();
+        $cad = "SELECT * FROM SYSTEM_USUARIOS
+                WHERE ACTIVO = 'S'
+                AND NOMBRE = '" . $db->real_escape_string($_COOKIE['system_name']) . "'
+                AND TOKEN = '" . $db->real_escape_string($_COOKIE['system_token']) . "'";
+        $sql = $db->query($cad);
+        return $db->rows($sql) > 0;
+    } else {
+        return false;
+    }
+}
+?>

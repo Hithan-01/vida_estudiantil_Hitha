@@ -15,7 +15,7 @@ class Conexion extends mysqli {
     
 }
 class Template {
-    public $siteURL = "/cpanel/cpanel_Hithan-main/";
+    public $siteURL = "/cpanel/cpanel_Hithan-main/cpanel/";
     public $titulo;
     public $usuario_id;
     public $usuario_nombre;

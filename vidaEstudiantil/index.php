@@ -6,7 +6,7 @@ $portalURL = $siteURL . 'vidaEstudiantil/';
 
 include('assets/php/header.php');
 
-include('../assets/API/db.php');
+include('../cpanel/assets/API/db.php');
 $db = new Conexion();
 $hoy = date('Y-m-d');
 

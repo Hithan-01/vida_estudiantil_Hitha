@@ -5,7 +5,7 @@ $siteURL  = '/cpanel/cpanel_Hithan-main/';
 $portalURL = $siteURL . 'vidaEstudiantil/';
 
 include('assets/php/header.php');
-include('../assets/API/db.php');
+include('../cpanel/assets/API/db.php');
 $db = new Conexion();
 
 $eventos = [];
