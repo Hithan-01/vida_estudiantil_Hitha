@@ -13,8 +13,8 @@ $tieneVideo = file_exists($videoPath) || file_exists($videoWebm);
 
 $videoActual = null;
 $videoExt    = null;
-if (file_exists($videoPath)) { $videoActual = '/cpanel/cpanel_Hithan-main/vidaEstudiantil/assets/videos/hero.mp4'; $videoExt = 'mp4'; }
-elseif (file_exists($videoWebm)) { $videoActual = '/cpanel/cpanel_Hithan-main/vidaEstudiantil/assets/videos/hero.webm'; $videoExt = 'webm'; }
+if (file_exists($videoPath)) { $videoActual = '/vida_estudiantil_Hitha/vidaEstudiantil/assets/videos/hero.mp4'; $videoExt = 'mp4'; }
+elseif (file_exists($videoWebm)) { $videoActual = '/vida_estudiantil_Hitha/vidaEstudiantil/assets/videos/hero.webm'; $videoExt = 'webm'; }
 ?>
 <!DOCTYPE html>
 <html lang="es" data-footer="true" data-override='{"attributes": {"placement": "vertical"}}'>

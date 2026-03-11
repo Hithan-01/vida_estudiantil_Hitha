@@ -1,7 +1,7 @@
 <?php
 $titulo = 'Clubes';
 $paginaActiva = 'clubes';
-$siteURL = '/cpanel/cpanel_Hithan-main/';
+$siteURL = '/vida_estudiantil_Hitha/';
 $portalURL = $siteURL . 'vidaEstudiantil/';
 
 include('assets/php/header.php');
@@ -9,7 +9,7 @@ include('../cpanel/assets/API/db.php');
 $db = new Conexion();
 
 $clubes = [];
-$sql = $db->query("SELECT ID, NOMBRE, DESCRIPCION, IMAGEN_URL, RESPONSABLE_NOMBRE, HORARIO, LUGAR, CONTACTO
+$sql = $db->query("SELECT ID, NOMBRE, DESCRIPCION, IMAGEN_URL, RESPONSABLE_NOMBRE, HORARIO, LUGAR, RESPONSABLE_CONTACTO
     FROM VRE_CLUBES WHERE ACTIVO='S' ORDER BY ORDEN ASC, NOMBRE ASC");
 while ($r = $db->recorrer($sql)) $clubes[] = $r;
 ?>
