@@ -310,5 +310,4 @@ document.querySelectorAll('#filtroForm select').forEach(s => {
 });
 document.getElementById('chkConmem')?.addEventListener('change', () => document.getElementById('filtroForm').submit());
 </script>
-
 <?php include('assets/php/footer.php'); ?>
