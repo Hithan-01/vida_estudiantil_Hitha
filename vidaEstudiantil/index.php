@@ -10,41 +10,30 @@ include('../cpanel/assets/API/db.php');
 $db = new Conexion();
 $hoy = date('Y-m-d');
 
-// Cargar configuración del home
-$homeConfig = [];
-$sqlConfig = $db->query("SELECT SECCION, CLAVE, VALOR FROM VRE_HOME_CONFIG WHERE ACTIVO = 'S'");
-if ($sqlConfig && $db->rows($sqlConfig) > 0) {
-    while ($row = $sqlConfig->fetch_assoc()) {
-        $homeConfig[$row['SECCION']][$row['CLAVE']] = $row['VALOR'];
-    }
-}
-
-// Video hero desde configuración
-$usarVideo = ($homeConfig['hero']['usar_video'] ?? '0') === '1';
-$heroVideoURL = null;
-$heroVideoType = 'video/mp4';
-$isYouTube = false;
-$youtubeEmbedURL = null;
-
-if ($usarVideo && !empty($homeConfig['hero']['video_url'])) {
-    $heroVideoURL = $homeConfig['hero']['video_url'];
-
-    // Detectar si es YouTube
-    if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]+)/', $heroVideoURL, $matches)) {
-        $isYouTube = true;
-        $videoId = $matches[1];
-        $youtubeEmbedURL = "https://www.youtube.com/embed/{$videoId}?autoplay=1&mute=1&loop=1&playlist={$videoId}&controls=0&showinfo=0&rel=0&modestbranding=1";
-    }
-} else {
-    // Fallback: buscar archivo físico
-    $heroVideoPath = __DIR__ . '/assets/videos/hero.mp4';
-    $heroVideoWebm = __DIR__ . '/assets/videos/hero.webm';
-    if (file_exists($heroVideoPath)) {
-        $heroVideoURL = $portalURL . 'assets/videos/hero.mp4';
-        $heroVideoType = 'video/mp4';
-    } elseif (file_exists($heroVideoWebm)) {
-        $heroVideoURL = $portalURL . 'assets/videos/hero.webm';
-        $heroVideoType = 'video/webm';
+// Video hero
+$heroVideoPath = __DIR__ . '/assets/videos/hero.mp4';
+$heroVideoWebm = __DIR__ . '/assets/videos/hero.webm';
+$heroUrlFile   = __DIR__ . '/assets/videos/hero-url.txt';
+$heroVideoURL  = null;
+$heroVideoType = null;
+$heroIsEmbed   = false;
+if (file_exists($heroVideoPath)) {
+    $heroVideoURL  = $portalURL . 'assets/videos/hero.mp4';
+    $heroVideoType = 'video/mp4';
+} elseif (file_exists($heroVideoWebm)) {
+    $heroVideoURL  = $portalURL . 'assets/videos/hero.webm';
+    $heroVideoType = 'video/webm';
+} elseif (file_exists($heroUrlFile)) {
+    $savedUrl = trim(file_get_contents($heroUrlFile));
+    if ($savedUrl !== '') {
+        // Detectar YouTube
+        if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_\-]{11})/', $savedUrl, $m)) {
+            $heroVideoURL  = 'https://www.youtube.com/embed/' . $m[1] . '?autoplay=1&mute=1&loop=1&playlist=' . $m[1];
+            $heroIsEmbed   = true;
+        } else {
+            $heroVideoURL  = $savedUrl;
+            $heroVideoType = 'video/mp4';
+        }
     }
 }
 $anio = date('Y');
@@ -74,20 +63,17 @@ while ($r = $db->recorrer($sqlE)) $eventos[] = $r;
 <header class="bg-gradient-primary">
     <div class="page-header min-vh-75 position-relative" style="<?php echo $heroVideoURL ? '' : 'background: linear-gradient(135deg,#5e72e4 0%,#825ee4 60%,#11cdef 100%);'; ?>">
 
-        <?php if ($heroVideoURL): ?>
-            <?php if ($isYouTube): ?>
-            <!-- Video de YouTube -->
-            <iframe src="<?php echo $youtubeEmbedURL; ?>"
-                    style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;border:none;pointer-events:none;"
-                    allow="autoplay; encrypted-media"
-                    allowfullscreen></iframe>
-            <?php else: ?>
-            <!-- Video MP4/WebM -->
-            <video autoplay muted loop playsinline
-                   style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;">
-                <source src="<?php echo $heroVideoURL; ?>" type="<?php echo $heroVideoType; ?>">
-            </video>
-            <?php endif; ?>
+        <?php if ($heroVideoURL && $heroIsEmbed): ?>
+        <!-- YouTube embed de fondo -->
+        <iframe src="<?php echo htmlspecialchars($heroVideoURL); ?>"
+                style="position:absolute;inset:0;width:100%;height:100%;border:0;z-index:0;pointer-events:none;"
+                allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <?php elseif ($heroVideoURL): ?>
+        <!-- Video de fondo -->
+        <video autoplay muted loop playsinline
+               style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;">
+            <source src="<?php echo htmlspecialchars($heroVideoURL); ?>" type="<?php echo $heroVideoType; ?>">
+        </video>
         <?php endif; ?>
 
         <span class="mask bg-gradient-dark <?php echo $heroVideoURL ? 'opacity-6' : 'opacity-4'; ?>"></span>
