@@ -7,11 +7,10 @@ if (!$temp->validate_session()) {
     exit();
 }
 
-$videoDir  = dirname(__DIR__, 3) . '/vidaEstudiantil/assets/videos/';
+$videoDir  = __DIR__ . '/../../vida_estudiantil_Hitha/vidaEstudiantil/assets/videos/';
 $videoPath = $videoDir . 'hero.mp4';
 $videoWebm = $videoDir . 'hero.webm';
 $urlFile   = $videoDir . 'hero-url.txt';
-
 $tieneVideo = file_exists($videoPath) || file_exists($videoWebm);
 $tieneURL   = file_exists($urlFile) && trim(file_get_contents($urlFile)) !== '';
 $urlGuardada = $tieneURL ? trim(file_get_contents($urlFile)) : '';

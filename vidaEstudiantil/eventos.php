@@ -1,7 +1,7 @@
 <?php
 $titulo = 'Eventos';
 $paginaActiva = 'eventos';
-$siteURL  = '/vida_estudiantil_Hitha/';
+$siteURL = '/vida_estudiantil_Hitha/';
 $portalURL = $siteURL . 'vidaEstudiantil/';
 
 include('assets/php/header.php');

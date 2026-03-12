@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = intval($_POST['id']);
 
     // Obtener información de la instalación antes de eliminar
-    $check = $db->query("SELECT * FROM VRE_INSTALACIONES_DEPORTIVAS WHERE ID = $id");
+    $check = $db->query("SELECT * FROM VRE_INSTALACIONES WHERE ID = $id");
     if (!$check || $check->num_rows == 0) {
         $info['success'] = 0;
         $info['message'] = 'Instalación no encontrada';
@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         // 2. Eliminar la instalación
-        $delete_instalacion = $db->query("DELETE FROM VRE_INSTALACIONES_DEPORTIVAS WHERE ID = $id");
+        $delete_instalacion = $db->query("DELETE FROM VRE_INSTALACIONES WHERE ID = $id");
 
         if (!$delete_instalacion) {
             throw new Exception('Error al eliminar la instalación');

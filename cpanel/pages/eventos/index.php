@@ -70,6 +70,7 @@ $puede_ver_galeria = $temp->tiene_permiso('galeria', 'ver');
                                             <th>Organizador</th>
                                             <th>Estado</th>
                                             <th>Destacado</th>
+                                            <th class="text-center">Visible</th>
                                             <th class="text-center">Acciones</th>
                                         </tr>
                                     </thead>
@@ -275,6 +276,29 @@ $puede_ver_galeria = $temp->tiene_permiso('galeria', 'ver');
             });
         }
 
+        function toggleVisibilidad(id, estadoActual) {
+            const formData = new FormData();
+            formData.append('id', id);
+
+            fetch(siteURL + 'assets/API/eventos/toggle-visibilidad.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success == 1) {
+                    jQuery.notify({title: '¡Listo!', message: data.message}, {type: 'success', delay: 3000});
+                    cargarEventos();
+                } else {
+                    jQuery.notify({title: 'Error', message: data.message}, {type: 'danger'});
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                jQuery.notify({title: 'Error', message: 'Error al cambiar visibilidad'}, {type: 'danger'});
+            });
+        }
+
         function cargarEventos() {
             fetch(siteURL + 'assets/API/eventos/listar.php')
                 .then(response => response.json())
@@ -295,6 +319,10 @@ $puede_ver_galeria = $temp->tiene_permiso('galeria', 'ver');
                                 'CANCELADO': '<span class="badge bg-danger">Cancelado</span>'
                             };
 
+                            const esVisible = evt.ACTIVO == 'S';
+                            const iconoOjo = esVisible ? 'fa-eye text-success' : 'fa-eye-slash text-muted';
+                            const tituloOjo = esVisible ? 'Visible en el sitio público' : 'Oculto del sitio público';
+
                             htmlRows += `
                                 <tr>
                                     <td>${evt.ID}</td>
@@ -307,6 +335,14 @@ $puede_ver_galeria = $temp->tiene_permiso('galeria', 'ver');
                                     <td>${evt.ORGANIZADOR}</td>
                                     <td>${estadoLabels[evt.ESTADO] || evt.ESTADO}</td>
                                     <td><span class="badge ${evt.DESTACADO == 'S' ? 'bg-warning' : 'bg-secondary'}">${evt.DESTACADO == 'S' ? 'Destacado' : 'Normal'}</span></td>
+                                    <td class="text-center">
+                                        ${puedeEditar ? `<button class="btn btn-sm btn-icon-only" type="button"
+                                            onclick="toggleVisibilidad(${evt.ID}, '${evt.ACTIVO}')"
+                                            title="${tituloOjo}"
+                                            style="border:none;background:transparent;font-size:1.2rem;cursor:pointer;">
+                                            <i class="fa ${iconoOjo}"></i>
+                                        </button>` : `<i class="fa ${iconoOjo}" title="${tituloOjo}"></i>`}
+                                    </td>
                                     <td class="text-center">
                                         ${puedeEditar ? `<button class="btn btn-sm btn-icon btn-icon-start btn-outline-primary ms-1" type="button" onclick="editarEvento(${evt.ID})">
                                             <i class="fa fa-edit"></i>

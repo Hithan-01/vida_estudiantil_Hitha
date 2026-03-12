@@ -22,7 +22,7 @@ if (!$temp->validate_session()) {
     exit;
 }
 
-$videoDir  = __DIR__ . '/../../../../vidaEstudiantil/assets/videos/';
+$videoDir  = __DIR__ . '/../../../vida_estudiantil_Hitha/vidaEstudiantil/assets/videos/';
 $videoPath = $videoDir . 'hero.mp4';
 $videoURL  = '/cpanel/cpanel_Hithan-main/vidaEstudiantil/assets/videos/hero.mp4';
 $urlFile   = $videoDir . 'hero-url.txt';

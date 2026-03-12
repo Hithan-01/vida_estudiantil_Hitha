@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Si orden es 0, calcular el siguiente disponible
     if ($orden == 0) {
-        $max_orden = $db->query("SELECT MAX(ORDEN) as max_orden FROM VRE_INSTALACIONES_DEPORTIVAS");
+        $max_orden = $db->query("SELECT MAX(ORDEN) as max_orden FROM VRE_INSTALACIONES");
         if ($max_orden) {
             $row = $max_orden->fetch_assoc();
             $orden = ($row['max_orden'] ?? 0) + 1;
@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Insertar en la base de datos
-    $cad = "INSERT INTO VRE_INSTALACIONES_DEPORTIVAS
+    $cad = "INSERT INTO VRE_INSTALACIONES
             (NOMBRE, TIPO, DESCRIPCION, UBICACION, COORDENADAS, CAPACIDAD, HORARIOS, SERVICIOS, REGLAS, COSTO, DISPONIBLE, ACTIVO, ORDEN)
             VALUES
             ('$nombre', '$tipo', " .

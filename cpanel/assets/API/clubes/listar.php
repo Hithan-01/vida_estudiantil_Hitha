@@ -60,7 +60,13 @@ try {
             }
         }
 
-        $row['IMAGEN_PRINCIPAL'] = $imagen_principal;
+        // Priorizar IMAGEN_URL de la tabla si existe, sino usar de VRE_GALERIA
+        if (!empty($row['IMAGEN_URL'])) {
+            $row['IMAGEN_PRINCIPAL'] = $row['IMAGEN_URL'];
+        } else {
+            $row['IMAGEN_PRINCIPAL'] = $imagen_principal;
+        }
+
         $row['IMAGENES'] = $imagenes;
         $row['TOTAL_IMAGENES'] = count($imagenes);
 

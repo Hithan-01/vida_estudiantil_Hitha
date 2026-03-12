@@ -1,5 +1,5 @@
 <?php
-$siteURL  = '/vida_estudiantil_Hitha/';
+$siteURL = '/vida_estudiantil_Hitha/';
 $portalURL = $siteURL . 'vidaEstudiantil/';
 
 include('../cpanel/assets/API/db.php');
