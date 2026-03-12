@@ -14,6 +14,7 @@
                     <li class="mb-1"><a href="<?php echo $portalURL; ?>clubes"><i class="fas fa-chevron-right me-1" style="font-size:.7rem;"></i>Clubes</a></li>
                     <li class="mb-1"><a href="<?php echo $portalURL; ?>ministerios"><i class="fas fa-chevron-right me-1" style="font-size:.7rem;"></i>Ministerios</a></li>
                     <li class="mb-1"><a href="<?php echo $portalURL; ?>eventos"><i class="fas fa-chevron-right me-1" style="font-size:.7rem;"></i>Eventos</a></li>
+                    <li class="mb-1"><a href="<?php echo $portalURL; ?>anuarios"><i class="fas fa-chevron-right me-1" style="font-size:.7rem;"></i>Anuarios</a></li>
                 </ul>
             </div>
             <div class="col-lg-3 col-6">

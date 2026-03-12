@@ -22,12 +22,6 @@ sort($categorias);
 
 <div style="background:linear-gradient(135deg,#2dce89,#2dcccc);padding:3rem 0;color:#fff;">
     <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-2" style="--bs-breadcrumb-divider-color:rgba(255,255,255,.5);">
-                <li class="breadcrumb-item"><a href="<?php echo $portalURL; ?>" style="color:rgba(255,255,255,.75);">Inicio</a></li>
-                <li class="breadcrumb-item active text-white">Eventos</li>
-            </ol>
-        </nav>
         <h1 style="font-size:2.25rem;font-weight:800;margin-bottom:.5rem;">
             <i class="fas fa-calendar-alt me-3"></i>Eventos
         </h1>

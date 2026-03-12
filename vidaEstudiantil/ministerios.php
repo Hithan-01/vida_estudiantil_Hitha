@@ -16,12 +16,6 @@ while ($r = $db->recorrer($sql)) $ministerios[] = $r;
 
 <div style="background:linear-gradient(135deg,#825ee4,#5e72e4);padding:3rem 0;color:#fff;">
     <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-2" style="--bs-breadcrumb-divider-color:rgba(255,255,255,.5);">
-                <li class="breadcrumb-item"><a href="<?php echo $portalURL; ?>" style="color:rgba(255,255,255,.75);">Inicio</a></li>
-                <li class="breadcrumb-item active text-white">Ministerios</li>
-            </ol>
-        </nav>
         <h1 style="font-size:2.25rem;font-weight:800;margin-bottom:.5rem;">
             <i class="fas fa-hands-praying me-3"></i>Ministerios
         </h1>

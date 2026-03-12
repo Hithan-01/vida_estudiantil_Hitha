@@ -17,12 +17,6 @@ while ($r = $db->recorrer($sql)) $clubes[] = $r;
 <!-- Page Header -->
 <div style="background:linear-gradient(135deg,#5e72e4,#825ee4);padding:3rem 0;color:#fff;margin-bottom:0;">
     <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-2" style="--bs-breadcrumb-divider-color:rgba(255,255,255,.5);">
-                <li class="breadcrumb-item"><a href="<?php echo $portalURL; ?>" style="color:rgba(255,255,255,.75);">Inicio</a></li>
-                <li class="breadcrumb-item active text-white" aria-current="page">Clubes</li>
-            </ol>
-        </nav>
         <h1 style="font-size:2.25rem;font-weight:800;margin-bottom:.5rem;">
             <i class="fas fa-users me-3"></i>Clubes Estudiantiles
         </h1>

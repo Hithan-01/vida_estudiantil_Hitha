@@ -34,13 +34,6 @@ include('assets/php/header.php');
              style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.3;" alt="">
     <?php endif; ?>
     <div style="position:relative;z-index:1;padding:3rem 0;color:#fff;" class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-2" style="--bs-breadcrumb-divider-color:rgba(255,255,255,.5);">
-                <li class="breadcrumb-item"><a href="<?php echo $portalURL; ?>" style="color:rgba(255,255,255,.75);">Inicio</a></li>
-                <li class="breadcrumb-item"><a href="<?php echo $portalURL; ?>ministerios" style="color:rgba(255,255,255,.75);">Ministerios</a></li>
-                <li class="breadcrumb-item active text-white"><?php echo htmlspecialchars($min['NOMBRE']); ?></li>
-            </ol>
-        </nav>
         <?php if (!empty($min['TIPO'])): ?>
             <span class="badge bg-white text-primary mb-2"><?php echo htmlspecialchars($min['TIPO']); ?></span>
         <?php endif; ?>
