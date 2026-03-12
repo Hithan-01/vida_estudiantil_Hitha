@@ -39,13 +39,6 @@ include('assets/php/header.php');
              style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35;" alt="">
     <?php endif; ?>
     <div style="position:relative;z-index:1;padding:3rem 0;color:#fff;" class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-2" style="--bs-breadcrumb-divider-color:rgba(255,255,255,.5);">
-                <li class="breadcrumb-item"><a href="<?php echo $portalURL; ?>" style="color:rgba(255,255,255,.75);">Inicio</a></li>
-                <li class="breadcrumb-item"><a href="<?php echo $portalURL; ?>clubes" style="color:rgba(255,255,255,.75);">Clubes</a></li>
-                <li class="breadcrumb-item active text-white"><?php echo htmlspecialchars($club['NOMBRE']); ?></li>
-            </ol>
-        </nav>
         <h1 style="font-size:2.5rem;font-weight:800;"><?php echo htmlspecialchars($club['NOMBRE']); ?></h1>
         <?php if (!empty($club['RESPONSABLE_NOMBRE'])): ?>
             <p style="opacity:.85;margin:0;"><i class="fas fa-user-tie me-2"></i>Responsable: <?php echo htmlspecialchars($club['RESPONSABLE_NOMBRE']); ?></p>

@@ -14,10 +14,14 @@ $sql = $db->query("SELECT ID, NOMBRE, TIPO, DESCRIPCION, IMAGEN_URL, RESPONSABLE
 while ($r = $db->recorrer($sql)) $ministerios[] = $r;
 ?>
 
-<!-- Page Header con Logo y Colores Amarillos del Ministerio -->
-<div class="position-relative overflow-hidden" style="background: linear-gradient(135deg, #fbda20 0%, #d9b000 100%); padding: 5rem 0 4rem;">
-    <!-- Patrón de fondo sutil -->
-    <div class="position-absolute top-0 start-0 w-100 h-100" style="opacity: 0.08; background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%231565C0" fill-opacity="1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+<div style="background:linear-gradient(135deg,#825ee4,#5e72e4);padding:3rem 0;color:#fff;">
+    <div class="container">
+        <h1 style="font-size:2.25rem;font-weight:800;margin-bottom:.5rem;">
+            <i class="fas fa-hands-praying me-3"></i>Ministerios
+        </h1>
+        <p style="opacity:.9;margin:0;">Crece espiritualmente y sirve a tu comunidad universitaria</p>
+    </div>
+</div>
 
     <div class="container position-relative">
         <div class="row align-items-center">

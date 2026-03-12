@@ -1,6 +1,11 @@
 <?php
-$siteURL = '/vida_estudiantil_Hitha/';
-$portalURL = $siteURL . 'vidaEstudiantil/';
+// ── URLs base (ajustar si cambia el hosting) ──
+$siteURL   = '/cpanel/';          // Base del cpanel (para imágenes / assets del admin)
+$portalURL = '/vidaEstudiantil/'; // Base del portal público
+
+// Google Sign-In Client ID — regístralo en Google Cloud Console
+define('GOOGLE_CLIENT_ID', '875058597883-dkfj1de8anmrhq44pup5mimv0lg7ag5n.apps.googleusercontent.com');
+
 $titulo = isset($titulo) ? $titulo . ' — Vida Estudiantil UM' : 'Vida Estudiantil UM';
 $paginaActiva = isset($paginaActiva) ? $paginaActiva : '';
 ?>
@@ -10,7 +15,6 @@ $paginaActiva = isset($paginaActiva) ? $paginaActiva : '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title><?php echo htmlspecialchars($titulo); ?></title>
-    <link rel="icon" type="image/svg+xml" href="<?php echo $siteURL; ?>favicon.svg">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
@@ -22,14 +26,23 @@ $paginaActiva = isset($paginaActiva) ? $paginaActiva : '';
     <link rel="stylesheet" href="<?php echo $portalURL; ?>assets/css/soft-design-system-pro.min.css">
     <!-- Portal custom overrides -->
     <link rel="stylesheet" href="<?php echo $portalURL; ?>assets/css/portal.css?v=<?php echo time(); ?>">
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body class="index-page">
+
+<!-- Google Sign-In invisible trigger -->
+<div id="g_id_onload"
+     data-client_id="<?php echo GOOGLE_CLIENT_ID; ?>"
+     data-callback="handleGoogleSignIn"
+     data-auto_prompt="false"
+     data-ux_mode="popup">
+</div>
 
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg blur border-radius-lg top-0 z-index-3 shadow position-sticky py-2 start-0 end-0 my-0" id="navbarBlur" navbar-scroll="true">
     <div class="container">
         <a class="navbar-brand" href="<?php echo $portalURL; ?>">
-            <img src="<?php echo $siteURL; ?>favicon.svg" alt="UM" height="36" class="me-2">
             <span class="font-weight-bolder">Vida Estudiantil</span>
         </a>
         <button class="navbar-toggler shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navPortal" aria-expanded="false">
@@ -83,3 +96,76 @@ $paginaActiva = isset($paginaActiva) ? $paginaActiva : '';
         </div>
     </div>
 </nav>
+
+<script>
+// ── Google Sign-In: callback global ──
+function handleGoogleSignIn(response) {
+    sessionStorage.setItem('google_credential', response.credential);
+    try {
+        const payload = JSON.parse(atob(response.credential.split('.')[1]));
+        sessionStorage.setItem('google_name',  payload.name  || payload.email);
+        sessionStorage.setItem('google_email', payload.email || '');
+    } catch(e) {}
+    if (window._pendingLike) {
+        const fn = window._pendingLike;
+        window._pendingLike = null;
+        fn();
+    }
+}
+
+// ── Dar like con autenticación Google ──
+window.likeConGoogle = function(id, btnEl, counterEl) {
+    function doSubmit() {
+        const cred = sessionStorage.getItem('google_credential');
+        if (!cred) return;
+        if (btnEl) { btnEl.disabled = true; btnEl.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>…'; }
+        fetch('/cpanel/assets/API/anuarios/like-publico.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'id=' + id + '&credential=' + encodeURIComponent(cred)
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                if (counterEl) counterEl.textContent = data.likes;
+                if (btnEl) {
+                    btnEl.classList.remove('btn-outline-danger');
+                    btnEl.classList.add('btn-danger');
+                    btnEl.innerHTML = '<i class="fas fa-heart me-1"></i>' + data.likes;
+                    btnEl.disabled = true;
+                    btnEl.title = '¡Gracias, ' + (sessionStorage.getItem('google_name') || '') + '!';
+                }
+            } else if (data.ya_dio_like) {
+                if (btnEl) {
+                    btnEl.classList.remove('btn-outline-danger');
+                    btnEl.classList.add('btn-danger');
+                    btnEl.innerHTML = '<i class="fas fa-heart me-1"></i>' + (data.likes ?? '');
+                    btnEl.disabled = true;
+                    btnEl.title = 'Ya diste like';
+                }
+            } else if (data.token_invalido) {
+                sessionStorage.removeItem('google_credential');
+                window._pendingLike = doSubmit;
+                if (typeof google !== 'undefined') google.accounts.id.prompt();
+                if (btnEl) btnEl.disabled = false;
+            } else {
+                if (btnEl) { btnEl.disabled = false; btnEl.innerHTML = '<i class="fas fa-heart me-1"></i>Like'; }
+            }
+        })
+        .catch(() => { if (btnEl) { btnEl.disabled = false; btnEl.innerHTML = '<i class="fas fa-heart me-1"></i>Like'; } });
+    }
+
+    const cred = sessionStorage.getItem('google_credential');
+    if (!cred) {
+        window._pendingLike = doSubmit;
+        if (typeof google !== 'undefined' && google.accounts) {
+            google.accounts.id.prompt();
+        } else {
+            const msg = document.getElementById('google-signin-msg');
+            if (msg) { msg.style.display = ''; setTimeout(() => msg.style.display = 'none', 3000); }
+        }
+    } else {
+        doSubmit();
+    }
+};
+</script>

@@ -1,4 +1,5 @@
 <IfModule mod_rewrite.c>
+Options +FollowSymLinks
 RewriteEngine On
 RewriteBase /vida_estudiantil_Hitha/vidaEstudiantil/
 
@@ -19,6 +20,7 @@ RewriteRule ^deportes/?$                  deportes.php [L]
 RewriteRule ^anuarios/?$                  anuarios.php [L]
 RewriteRule ^club/([0-9]+)/?$            club.php?id=$1 [L,QSA]
 RewriteRule ^ministerio/([0-9]+)/?$      ministerio.php?id=$1 [L,QSA]
+RewriteRule ^anuario/([0-9]+)/?$         anuario.php?id=$1 [L,QSA]
 RewriteRule ^instalacion/([0-9]+)/?$     instalacion.php?id=$1 [L,QSA]
 RewriteRule ^deporte/([0-9]+)/?$         deporte.php?id=$1 [L,QSA]
 

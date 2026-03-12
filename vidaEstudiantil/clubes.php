@@ -14,49 +14,13 @@ $sql = $db->query("SELECT ID, NOMBRE, DESCRIPCION, IMAGEN_URL, RESPONSABLE_NOMBR
 while ($r = $db->recorrer($sql)) $clubes[] = $r;
 ?>
 
-<!-- Page Header con Logo y Fondo de Imagen -->
-<div class="position-relative overflow-hidden" style="background: url('<?php echo $siteURL; ?>Fondo_Clubes.jpg') center center / cover no-repeat; padding: 5rem 0 4rem;">
-    <!-- Overlay oscuro para legibilidad -->
-    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, rgba(21, 111, 181, 0.85) 0%, rgba(13, 84, 145, 0.9) 100%);"></div>
-
-    <div class="container position-relative">
-        <div class="row align-items-center">
-            <!-- Logo y Título -->
-            <div class="col-lg-8">
-                <div class="d-flex align-items-start mb-4">
-                    <!-- Logo del Ministerio -->
-                    <div class="me-4" style="min-width: 100px;">
-                        <img src="<?php echo $siteURL; ?>Logo_Clubes_Ministerios-removebg-preview.png"
-                             alt="Logo Ministerio Juvenil"
-                             style="width: 100px; height: auto; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));">
-                    </div>
-
-                    <div>
-                        <h1 class="text-white font-weight-bolder mb-2" style="font-size: 2.8rem; line-height: 1.2;">
-                            Clubes Estudiantiles
-                        </h1>
-                        <p class="text-white mb-3" style="font-size: 1.15rem; opacity: 0.95;">
-                            Encuentra el club perfecto para ti y forma parte de una comunidad increíble
-                        </p>
-                        <div class="d-flex gap-2 flex-wrap">
-                            <span class="badge px-3 py-2" style="background: rgba(251, 218, 32, 0.2); color: #fbda20; border: 1px solid #fbda20; font-weight: 600;">
-                                <i class="fas fa-users me-1"></i><?php echo count($clubes); ?> Clubes Activos
-                            </span>
-                            <span class="badge px-3 py-2" style="background: rgba(255, 255, 255, 0.15); color: white; font-weight: 600;">
-                                <i class="fas fa-heart me-1"></i>Ministerio Juvenil Doulos
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Wave separador -->
-    <div class="position-absolute bottom-0 start-0 w-100" style="transform: translateY(1px);">
-        <svg viewBox="0 0 1440 120" xmlns="http://www.w3.org/2000/svg" style="display: block;">
-            <path fill="#f8f9fa" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"/>
-        </svg>
+<!-- Page Header -->
+<div style="background:linear-gradient(135deg,#5e72e4,#825ee4);padding:3rem 0;color:#fff;margin-bottom:0;">
+    <div class="container">
+        <h1 style="font-size:2.25rem;font-weight:800;margin-bottom:.5rem;">
+            <i class="fas fa-users me-3"></i>Clubes Estudiantiles
+        </h1>
+        <p style="opacity:.9;margin:0;">Encuentra el club perfecto para ti y forma parte de una comunidad increíble</p>
     </div>
 </div>
 
