@@ -54,7 +54,7 @@ $soloDestacados = ($homeConfig['eventos']['solo_destacados'] ?? '0') === '1';
 // Próximos eventos
 $eventos = [];
 $whereDestacados = $soloDestacados ? "AND DESTACADO='S'" : "";
-$sqlE = $db->query("SELECT ID, TITULO, DESCRIPCION_CORTA, FECHA_EVENTO, LUGAR, IMAGEN_PRINCIPAL, CATEGORIA
+$sqlE = $db->query("SELECT ID, TITULO, DESCRIPCION, DESCRIPCION_CORTA, FECHA_EVENTO, LUGAR, IMAGEN_PRINCIPAL, CATEGORIA
     FROM VRE_EVENTOS WHERE ACTIVO='S' $whereDestacados ORDER BY DESTACADO DESC, FECHA_EVENTO ASC LIMIT $cantidadEventos");
 while ($r = $db->recorrer($sqlE)) $eventos[] = $r;
 ?>
@@ -248,9 +248,9 @@ if ($estiloEventos === 'auto') {
                                         <?php endif; ?>
                                     </div>
                                 </div>
-                                <?php if (!empty($ev['DESCRIPCION_CORTA'])): ?>
-                                    <p class="text-secondary mb-4">
-                                        <?php echo htmlspecialchars($ev['DESCRIPCION_CORTA']); ?>
+                                <?php if (!empty($ev['DESCRIPCION'])): ?>
+                                    <p class="text-secondary mb-4" style="line-height: 1.6;">
+                                        <?php echo htmlspecialchars(mb_substr($ev['DESCRIPCION'], 0, 200)); ?>...
                                     </p>
                                 <?php endif; ?>
                                 <a href="<?php echo $portalURL; ?>evento/<?php echo $ev['ID']; ?>"
@@ -303,9 +303,9 @@ if ($estiloEventos === 'auto') {
                                         <i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($ev['LUGAR']); ?>
                                     </p>
                                 <?php endif; ?>
-                                <?php if (!empty($ev['DESCRIPCION_CORTA'])): ?>
-                                    <p class="text-secondary text-sm mb-3">
-                                        <?php echo htmlspecialchars(mb_substr($ev['DESCRIPCION_CORTA'], 0, 100)); ?>
+                                <?php if (!empty($ev['DESCRIPCION'])): ?>
+                                    <p class="text-secondary text-sm mb-3" style="line-height: 1.6;">
+                                        <?php echo htmlspecialchars(mb_substr($ev['DESCRIPCION'], 0, 120)); ?>...
                                     </p>
                                 <?php endif; ?>
                                 <a href="<?php echo $portalURL; ?>evento/<?php echo $ev['ID']; ?>"
@@ -368,7 +368,7 @@ if ($estiloEventos === 'auto') {
                 </div>
 
             <?php else: ?>
-                <!-- Estilo GRID: Grid de 3 columnas (por defecto) -->
+                <!-- Estilo GRID MODERNO: Diseño con imágenes grandes y atractivas -->
                 <div class="row g-4">
                     <?php foreach ($eventos as $ev): ?>
                     <?php
@@ -378,48 +378,102 @@ if ($estiloEventos === 'auto') {
                         $year  = $fecha->format('Y');
                     ?>
                     <div class="col-md-6 col-lg-4">
-                        <div class="card shadow border-0 border-radius-xl h-100 move-on-hover">
-                            <?php if (!empty($ev['IMAGEN_PRINCIPAL'])): ?>
-                            <div class="card-header p-0 border-0">
-                                <img src="<?php echo $siteURL . htmlspecialchars($ev['IMAGEN_PRINCIPAL']); ?>"
-                                     class="w-100 border-radius-xl border-radius-bottom-none"
-                                     style="height:160px;object-fit:cover;"
-                                     alt="<?php echo htmlspecialchars($ev['TITULO']); ?>">
-                            </div>
-                            <?php endif; ?>
-                            <div class="card-body p-4 d-flex gap-3">
-                                <div class="text-center flex-shrink-0">
-                                    <div class="bg-gradient-primary border-radius-lg px-2 py-2" style="min-width:52px;">
-                                        <span class="d-block text-white text-xs font-weight-bold"><?php echo $mes; ?></span>
-                                        <span class="d-block text-white font-weight-bolder" style="font-size:1.6rem;line-height:1;"><?php echo $dia; ?></span>
-                                        <span class="d-block text-white opacity-7 text-xs"><?php echo $year; ?></span>
+                        <div class="card border-0 shadow-lg border-radius-xl overflow-hidden h-100"
+                             style="transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+
+                            <!-- Imagen del evento con fecha flotante -->
+                            <div class="position-relative" style="height: 350px; overflow: hidden;">
+                                <?php if (!empty($ev['IMAGEN_PRINCIPAL'])): ?>
+                                    <img src="<?php echo $siteURL . htmlspecialchars($ev['IMAGEN_PRINCIPAL']); ?>"
+                                         class="w-100 h-100"
+                                         style="object-fit: cover; transition: transform 0.5s ease;"
+                                         alt="<?php echo htmlspecialchars($ev['TITULO']); ?>"
+                                         onmouseover="this.style.transform='scale(1.08)'"
+                                         onmouseout="this.style.transform='scale(1)'">
+
+                                    <!-- Gradiente overlay para mejor legibilidad -->
+                                    <div class="position-absolute top-0 start-0 w-100 h-100"
+                                         style="background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.7) 100%);"></div>
+                                <?php else: ?>
+                                    <!-- Gradiente de respaldo si no hay imagen -->
+                                    <div class="w-100 h-100 bg-gradient-primary"></div>
+                                <?php endif; ?>
+
+                                <!-- Fecha flotante en la esquina superior izquierda -->
+                                <div class="position-absolute top-0 start-0 m-3">
+                                    <div class="bg-white border-radius-lg shadow-lg text-center p-3" style="min-width: 70px;">
+                                        <span class="d-block text-gradient text-primary text-sm font-weight-bold mb-1"><?php echo $mes; ?></span>
+                                        <span class="d-block text-dark font-weight-bolder mb-1" style="font-size: 2rem; line-height: 1;"><?php echo $dia; ?></span>
+                                        <span class="d-block text-secondary text-xs"><?php echo $year; ?></span>
                                     </div>
                                 </div>
-                                <div class="flex-grow-1">
-                                    <?php if (!empty($ev['CATEGORIA'])): ?>
-                                        <span class="badge badge-sm bg-gradient-primary mb-1"><?php echo htmlspecialchars($ev['CATEGORIA']); ?></span>
-                                    <?php endif; ?>
-                                    <h6 class="font-weight-bolder mb-1"><?php echo htmlspecialchars($ev['TITULO']); ?></h6>
-                                    <?php if (!empty($ev['LUGAR'])): ?>
-                                        <p class="text-secondary text-xs mb-1">
-                                            <i class="fas fa-map-marker-alt me-1"></i><?php echo htmlspecialchars($ev['LUGAR']); ?>
-                                        </p>
-                                    <?php endif; ?>
-                                    <?php if (!empty($ev['DESCRIPCION_CORTA'])): ?>
-                                        <p class="text-secondary text-xs mb-2">
-                                            <?php echo htmlspecialchars(mb_substr($ev['DESCRIPCION_CORTA'], 0, 80)); ?>
-                                        </p>
-                                    <?php endif; ?>
-                                    <a href="<?php echo $portalURL; ?>evento/<?php echo $ev['ID']; ?>"
-                                       class="btn btn-sm btn-outline-primary font-weight-bold">
-                                        Ver evento
-                                    </a>
+
+                                <!-- Categoría flotante en esquina superior derecha -->
+                                <?php if (!empty($ev['CATEGORIA'])): ?>
+                                <div class="position-absolute top-0 end-0 m-3">
+                                    <span class="badge bg-white text-dark px-3 py-2 shadow" style="font-size: 0.75rem; font-weight: 600;">
+                                        <?php echo htmlspecialchars($ev['CATEGORIA']); ?>
+                                    </span>
                                 </div>
+                                <?php endif; ?>
+                            </div>
+
+                            <!-- Contenido del evento -->
+                            <div class="card-body p-4" style="background: #fff;">
+                                <!-- Título -->
+                                <h5 class="font-weight-bolder text-dark mb-3" style="font-size: 1.25rem; line-height: 1.4;">
+                                    <?php echo htmlspecialchars($ev['TITULO']); ?>
+                                </h5>
+
+                                <!-- Ubicación -->
+                                <?php if (!empty($ev['LUGAR'])): ?>
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="icon icon-sm bg-gradient-primary shadow text-center border-radius-md me-2">
+                                        <i class="fas fa-map-marker-alt text-white opacity-10" style="top: 6px; position: relative;"></i>
+                                    </div>
+                                    <p class="text-sm text-secondary mb-0 font-weight-500">
+                                        <?php echo htmlspecialchars($ev['LUGAR']); ?>
+                                    </p>
+                                </div>
+                                <?php endif; ?>
+
+                                <!-- Descripción -->
+                                <?php if (!empty($ev['DESCRIPCION'])): ?>
+                                <p class="text-sm text-secondary mb-4" style="line-height: 1.6;">
+                                    <?php echo htmlspecialchars(mb_substr($ev['DESCRIPCION'], 0, 150)); ?>...
+                                </p>
+                                <?php endif; ?>
+
+                                <!-- Botón de acción -->
+                                <a href="<?php echo $portalURL; ?>evento/<?php echo $ev['ID']; ?>"
+                                   class="btn btn-primary w-100 font-weight-bold mb-0 shadow-sm"
+                                   style="transition: all 0.3s ease;">
+                                    Ver evento <i class="fas fa-arrow-right ms-2"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
                     <?php endforeach; ?>
                 </div>
+
+                <!-- Estilos adicionales para efectos hover -->
+                <style>
+                    .card:hover {
+                        transform: translateY(-8px);
+                        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
+                    }
+                    .btn-primary:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 8px 20px rgba(94, 114, 228, 0.4);
+                    }
+                    .icon-sm {
+                        width: 32px;
+                        height: 32px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                </style>
             <?php endif; ?>
 
         <?php else: ?>

@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = intval($_POST['id']);
 
     // Verificar que la instalación existe
-    $check = $db->query("SELECT * FROM VRE_INSTALACIONES_DEPORTIVAS WHERE ID = $id");
+    $check = $db->query("SELECT * FROM VRE_INSTALACIONES WHERE ID = $id");
     if (!$check || $check->num_rows == 0) {
         $info['success'] = 0;
         $info['message'] = 'Instalación no encontrada';
@@ -133,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Ejecutar UPDATE
-    $cad = "UPDATE VRE_INSTALACIONES_DEPORTIVAS SET " . implode(', ', $updates) . " WHERE ID = $id";
+    $cad = "UPDATE VRE_INSTALACIONES SET " . implode(', ', $updates) . " WHERE ID = $id";
     $sql = $db->query($cad);
 
     if ($sql) {

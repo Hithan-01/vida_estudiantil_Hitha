@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $id = intval($_GET['id']);
 
     // Obtener instalación
-    $cad = "SELECT * FROM VRE_INSTALACIONES_DEPORTIVAS WHERE ID = $id";
+    $cad = "SELECT * FROM VRE_INSTALACIONES WHERE ID = $id";
     $sql = $db->query($cad);
 
     if ($sql && $sql->num_rows > 0) {

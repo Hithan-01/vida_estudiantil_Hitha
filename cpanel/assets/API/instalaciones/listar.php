@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $activo = isset($_GET['activo']) && $_GET['activo'] != '' ? $db->real_escape_string($_GET['activo']) : 'S';
 
     // Construir query
-    $cad = "SELECT * FROM VRE_INSTALACIONES_DEPORTIVAS WHERE 1=1";
+    $cad = "SELECT * FROM VRE_INSTALACIONES WHERE 1=1";
 
     if ($tipo) {
         $cad .= " AND TIPO = '$tipo'";

@@ -39,8 +39,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             throw new Exception('El nombre y la descripción del club son obligatorios');
         }
         
-        // PASO 2: Procesar imagen principal (opcional) - se guardará en VRE_GALERIA
-        $imagen_principal_url = isset($_POST['imagen_url']) ? $db->real_escape_string(trim($_POST['imagen_url'])) : null;
+        // PASO 2: Procesar imagen principal (opcional) desde archivo subido
+        $imagen_principal_url = null;
+        if (isset($_FILES['imagen_principal']) && $_FILES['imagen_principal']['error'] === UPLOAD_ERR_OK) {
+            $archivo = $_FILES['imagen_principal'];
+
+            // Validar tipo de archivo
+            $tiposPermitidos = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            if (!in_array($archivo['type'], $tiposPermitidos)) {
+                throw new Exception('Formato de imagen no válido. Solo JPG, PNG, GIF, WEBP.');
+            }
+
+            // Validar tamaño (máx 5MB)
+            if ($archivo['size'] > 5 * 1024 * 1024) {
+                throw new Exception('La imagen no puede superar los 5MB');
+            }
+
+            // Generar nombre único
+            $extension = pathinfo($archivo['name'], PATHINFO_EXTENSION);
+            $nombreArchivo = 'club_' . uniqid() . '_' . time() . '.' . $extension;
+            $directorioDestino = '../../uploads/clubes/';
+
+            // Crear directorio si no existe
+            if (!is_dir($directorioDestino)) {
+                mkdir($directorioDestino, 0755, true);
+            }
+
+            $rutaCompleta = $directorioDestino . $nombreArchivo;
+
+            // Mover archivo
+            if (move_uploaded_file($archivo['tmp_name'], $rutaCompleta)) {
+                $imagen_principal_url = 'assets/uploads/clubes/' . $nombreArchivo;
+            } else {
+                throw new Exception('Error al subir la imagen');
+            }
+        }
         
         // PASO 3: Manejar director (existente o nuevo)
         $director_usuario_id = null;
@@ -99,8 +132,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $password_hash = md5($nuevo_password);
             $token = md5($nuevo_nombre . time());
 
-            $sql_usuario = "INSERT INTO SYSTEM_USUARIOS(NOMBRE, NOMBRE_COMPLETO, PASS, ID_CAT, EMAIL, ACTIVO, TOKEN, FECHA_CREACION)
-                           VALUES ('$nuevo_nombre', '$nombre_completo', '$password_hash', $rol_director, '$nuevo_email', 'S', '$token', NOW())";
+            $sql_usuario = "INSERT INTO SYSTEM_USUARIOS(NOMBRE, PASS, ID_CAT, EMAIL, ACTIVO, TOKEN, FECHA_CREACION)
+                           VALUES ('$nuevo_nombre', '$password_hash', $rol_director, '$nuevo_email', 'S', '$token', NOW())";
 
             if (!$db->query($sql_usuario)) {
                 throw new Exception('Error al crear el usuario director: ' . $db->error);
@@ -114,27 +147,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $responsable_nombre = '';
         if ($director_usuario_id) {
             if ($director_creado && !empty($nombre_completo)) {
-                // Si se creó un nuevo director, usar su nombre completo
+                // Si se creó un nuevo director, usar el nombre completo ingresado
                 $responsable_nombre = $nombre_completo;
             } else if ($director_usuario_id > 0) {
-                // Si es un director existente, obtener su nombre completo o username de la BD
-                $sql_responsable = $db->query("SELECT NOMBRE_COMPLETO, NOMBRE FROM SYSTEM_USUARIOS WHERE ID = $director_usuario_id");
+                // Si es un director existente, obtener su nombre de usuario de la BD
+                $sql_responsable = $db->query("SELECT NOMBRE FROM SYSTEM_USUARIOS WHERE ID = $director_usuario_id");
                 if ($sql_responsable && $sql_responsable->num_rows > 0) {
                     $resp_info = $sql_responsable->fetch_assoc();
-                    // Preferir NOMBRE_COMPLETO si existe, sino usar NOMBRE (username)
-                    $responsable_nombre = !empty($resp_info['NOMBRE_COMPLETO'])
-                        ? $db->real_escape_string($resp_info['NOMBRE_COMPLETO'])
-                        : $db->real_escape_string($resp_info['NOMBRE']);
+                    $responsable_nombre = $db->real_escape_string($resp_info['NOMBRE']);
                 }
             }
         }
 
-        // PASO 4: Crear el club incluyendo el RESPONSABLE_NOMBRE
+        // PASO 4: Crear el club incluyendo el RESPONSABLE_NOMBRE e IMAGEN_URL
         $director_value = ($director_usuario_id && intval($director_usuario_id) > 0) ? intval($director_usuario_id) : 'NULL';
         $responsable_value = !empty($responsable_nombre) ? "'$responsable_nombre'" : 'NULL';
+        $imagen_value = !empty($imagen_principal_url) ? "'$imagen_principal_url'" : 'NULL';
 
-        $sql_club = "INSERT INTO VRE_CLUBES(NOMBRE, DESCRIPCION, ID_DIRECTOR_USUARIO, RESPONSABLE_NOMBRE, ACTIVO, FECHA_CREACION)
-                     VALUES ('$nombre', '$descripcion', $director_value, $responsable_value, 'S', NOW())";
+        $sql_club = "INSERT INTO VRE_CLUBES(NOMBRE, DESCRIPCION, ID_DIRECTOR_USUARIO, RESPONSABLE_NOMBRE, IMAGEN_URL, ACTIVO, FECHA_CREACION)
+                     VALUES ('$nombre', '$descripcion', $director_value, $responsable_value, $imagen_value, 'S', NOW())";
 
         if (!$db->query($sql_club)) {
             throw new Exception('Error al crear el club: ' . $db->error);
@@ -159,20 +190,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             // PASO 5B: Crear registro en VRE_DIRECTIVA_CLUBES e insertar director
-            $director_nombre = '';
-            $director_email = '';
-            $sql_director = $db->query("SELECT NOMBRE_COMPLETO, NOMBRE, EMAIL FROM SYSTEM_USUARIOS WHERE ID = $director_usuario_id");
+            $director_nombre_directiva = '';
+            $director_email_directiva = '';
+            $sql_director = $db->query("SELECT NOMBRE, EMAIL FROM SYSTEM_USUARIOS WHERE ID = $director_usuario_id");
             if ($sql_director && $sql_director->num_rows > 0) {
                 $director_info = $sql_director->fetch_assoc();
-                // Preferir NOMBRE_COMPLETO si existe, sino usar NOMBRE (username)
-                $director_nombre = !empty($director_info['NOMBRE_COMPLETO'])
-                    ? $db->real_escape_string($director_info['NOMBRE_COMPLETO'])
-                    : $db->real_escape_string($director_info['NOMBRE']);
-                $director_email = $db->real_escape_string($director_info['EMAIL']);
+                // Si es director nuevo Y se ingresó nombre completo, usar ese; sino usar username
+                if ($director_creado && !empty($nombre_completo)) {
+                    $director_nombre_directiva = $db->real_escape_string($nombre_completo);
+                } else {
+                    $director_nombre_directiva = $db->real_escape_string($director_info['NOMBRE']);
+                }
+                $director_email_directiva = $db->real_escape_string($director_info['EMAIL']);
             }
 
             $sql_directiva = "INSERT INTO VRE_DIRECTIVA_CLUBES(ID_CLUB, DIRECTOR_NOMBRE, DIRECTOR_EMAIL, ESTADO)
-                             VALUES ($club_id, '$director_nombre', '$director_email', 'activo')";
+                             VALUES ($club_id, '$director_nombre_directiva', '$director_email_directiva', 'activo')";
             if (!$db->query($sql_directiva)) {
                 throw new Exception('Error al crear registro de directiva: ' . $db->error);
             }

@@ -143,16 +143,10 @@ $puede_eliminar = $temp->tiene_permiso('clubes', 'eliminar');
                                 </div>
 
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Logo/Imagen del Club</label>
-                                    <input type="hidden" id="clubImagenUrl" name="imagen_url">
-                                    <div class="d-flex gap-2 align-items-start">
-                                        <button type="button" class="btn btn-outline-primary btn-sm" id="btnUploadLogoClub">
-                                            Subir Logo
-                                        </button>
-                                        <div id="previewLogoClub" style="display:none;">
-                                            <img id="logoPreviewClub" src="" style="max-width:100px; max-height:100px; border-radius:4px;">
-                                        </div>
-                                    </div>
+                                    <label class="form-label">Imagen Principal del Club</label>
+                                    <input type="file" id="clubImagenPrincipal" name="imagen_principal" class="form-control" accept="image/*">
+                                    <small class="text-muted">Formatos: JPG, PNG, WEBP. Tamaño máximo: 5MB. Recomendado: 1200x600px</small>
+                                    <div id="previewImagenPrincipalClub" class="mt-2"></div>
                                 </div>
 
                                 <div class="col-md-6 mb-3" id="containerActivoClub">
@@ -239,8 +233,9 @@ $puede_eliminar = $temp->tiene_permiso('clubes', 'eliminar');
                                         <input type="password" id="nuevo_password_club" name="nuevo_password" class="form-control" placeholder="Mínimo 8 caracteres">
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label class="form-label">Nombre Completo del Director</label>
-                                        <input type="text" id="nombre_completo_club" name="nombre_completo" class="form-control" placeholder="Juan Pérez">
+                                        <label class="form-label">Nombre Completo del Director *</label>
+                                        <input type="text" id="nombre_completo_club" name="nombre_completo" class="form-control" placeholder="Juan Pérez" required>
+                                        <small class="text-muted">Este nombre se mostrará públicamente en el club</small>
                                     </div>
                                 </div>
 
@@ -345,9 +340,6 @@ $puede_eliminar = $temp->tiene_permiso('clubes', 'eliminar');
     <!-- Search Modal Start -->
     <?php $temp->modalSearch() ?>
     <!-- Search Modal End -->
-
-    <!-- Input file oculto para upload -->
-    <input type="file" id="fileInputClub" style="display:none;" accept="image/*">
 
     <?php $temp->scripts() ?>
     <script>
@@ -495,9 +487,8 @@ $puede_eliminar = $temp->tiene_permiso('clubes', 'eliminar');
             document.getElementById('seccion_existente_club').style.display = 'block';
             document.getElementById('seccion_nuevo_club').style.display = 'none';
 
-            // Limpiar previsualización de logo
-            document.getElementById('previewLogoClub').style.display = 'none';
-            document.getElementById('clubImagenUrl').value = '';
+            // Limpiar previsualización de imagen
+            document.getElementById('previewImagenPrincipalClub').innerHTML = '';
 
             // Limpiar galería
             galeriaClub = [];
@@ -510,50 +501,20 @@ $puede_eliminar = $temp->tiene_permiso('clubes', 'eliminar');
             modalClub.show();
         }
 
-        // Botón de subir logo
-        document.getElementById('btnUploadLogoClub').addEventListener('click', function(e) {
-            e.preventDefault();
-            const fileInput = document.getElementById('fileInputClub');
+        // Preview de imagen principal al seleccionar archivo
+        document.getElementById('clubImagenPrincipal').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('previewImagenPrincipalClub');
 
-            fileInput.onchange = function() {
-                if (fileInput.files.length > 0) {
-                    const formData = new FormData();
-                    formData.append('archivo', fileInput.files[0]);
-                    formData.append('tipo', 'club');
-
-                    fetch(siteURL + 'assets/API/upload.php', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success == 1) {
-                            const imagenURL = data.url || data.url_relativa;
-                            document.getElementById('clubImagenUrl').value = imagenURL;
-                            document.getElementById('logoPreviewClub').src = imagenURL;
-                            document.getElementById('previewLogoClub').style.display = 'block';
-
-                            jQuery.notify({
-                                title: 'Éxito',
-                                message: 'Logo subido correctamente'
-                            }, { type: 'success' });
-                        } else {
-                            jQuery.notify({
-                                title: 'Error',
-                                message: data.message
-                            }, { type: 'danger' });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        jQuery.notify({
-                            title: 'Error',
-                            message: 'Error al subir el logo'
-                        }, { type: 'danger' });
-                    });
-                }
-            };
-            fileInput.click();
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    preview.innerHTML = `<img src="${event.target.result}" style="max-width: 300px; max-height: 200px; border-radius: 8px; margin-top: 10px;" class="shadow-sm">`;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.innerHTML = '';
+            }
         });
 
         // Editar club
@@ -569,14 +530,18 @@ $puede_eliminar = $temp->tiene_permiso('clubes', 'eliminar');
                             document.getElementById('clubDescripcion').value = club.DESCRIPCION || '';
                             document.getElementById('clubActivo').value = club.ACTIVO;
 
-                            // Cargar logo si existe
+                            // Mostrar imagen existente si hay
+                            const previewDiv = document.getElementById('previewImagenPrincipalClub');
                             if (club.IMAGEN_PRINCIPAL) {
-                                document.getElementById('clubImagenUrl').value = club.IMAGEN_PRINCIPAL;
-                                document.getElementById('logoPreviewClub').src = club.IMAGEN_PRINCIPAL;
-                                document.getElementById('previewLogoClub').style.display = 'block';
+                                previewDiv.innerHTML = `
+                                    <div class="mt-2">
+                                        <p class="text-muted mb-1"><small>Imagen actual:</small></p>
+                                        <img src="${club.IMAGEN_PRINCIPAL}" style="max-width: 300px; max-height: 200px; border-radius: 8px;" class="shadow-sm">
+                                        <p class="text-muted mt-2 mb-0"><small>Selecciona un nuevo archivo para reemplazarla</small></p>
+                                    </div>
+                                `;
                             } else {
-                                document.getElementById('clubImagenUrl').value = '';
-                                document.getElementById('previewLogoClub').style.display = 'none';
+                                previewDiv.innerHTML = '';
                             }
 
                             // Cargar galería existente (desde VRE_GALERIA)
@@ -632,7 +597,7 @@ $puede_eliminar = $temp->tiene_permiso('clubes', 'eliminar');
                     if (!nuevoNombre || !nuevoEmail || !nuevoPassword || !nombreCompleto) {
                         jQuery.notify({
                             title: 'Error',
-                            message: 'Si deseas crear un director, debes completar todos los campos del formulario.'
+                            message: 'Todos los campos del nuevo director son obligatorios.'
                         }, { type: 'danger' });
                         return;
                     }
