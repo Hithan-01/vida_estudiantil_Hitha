@@ -1,9 +1,8 @@
 <?php
 $titulo = 'Entrega de Anuarios 2025-2026';
 $paginaActiva = 'entrega-anuarios';
-
-// Cargar configuración global
-require_once('../config.php');
+$siteURL = '/Vida%20Estudiantil/';
+$portalURL = $siteURL . 'vidaEstudiantil/';
 
 include('assets/php/header.php');
 ?>
@@ -169,17 +168,35 @@ include('assets/php/header.php');
 }
 .ea-past .ea-section-title { color: #e2e8f0; }
 .ea-past .ea-section-sub   { color: #94a3b8; }
-.ea-past-cards {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
-    max-width: 1100px; margin: 0 auto; padding: 0 2rem;
+
+/* Carousel */
+.ea-carousel-wrap {
+    position: relative; max-width: 1200px; margin: 0 auto; padding: 0 2rem;
+}
+.ea-carousel {
+    overflow: visible;
+}
+.ea-carousel-track {
+    display: flex; transition: transform .5s cubic-bezier(.4,0,.2,1);
 }
 .ea-past-card {
+    flex: 0 0 78%; min-width: 78%;
+    padding: 0 .75rem;
+    transition: opacity .4s, transform .4s;
+    opacity: .45;
+    transform: scale(.96);
+}
+.ea-past-card.active-slide {
+    opacity: 1;
+    transform: scale(1);
+}
+.ea-past-card-inner {
     border-radius: .75rem; overflow: hidden; position: relative;
-    aspect-ratio: 16/10; background: #1e293b;
+    aspect-ratio: 16/7; background: #1e293b;
     box-shadow: 0 4px 20px rgba(0,0,0,.4);
     transition: transform .25s;
 }
-.ea-past-card:hover { transform: translateY(-4px); }
+.ea-past-card-inner:hover { transform: translateY(-4px); }
 .ea-past-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .ea-past-card-overlay {
     position: absolute; inset: 0;
@@ -197,8 +214,35 @@ include('assets/php/header.php');
     background: linear-gradient(135deg, #1e293b, #334155);
     color: #94a3b8; font-size: .85rem;
 }
-@media(max-width:640px){ .ea-past-cards { grid-template-columns: 1fr; } }
-@media(min-width:641px) and (max-width:900px){ .ea-past-cards { grid-template-columns: repeat(2,1fr); } }
+/* Flechas */
+.ea-carousel-btn {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18);
+    color: #fff; font-size: .9rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s; z-index: 2;
+}
+.ea-carousel-btn:hover { background: rgba(255,255,255,.25); }
+.ea-carousel-btn.prev { left: 0; }
+.ea-carousel-btn.next { right: 0; }
+.ea-carousel-btn:disabled { opacity: .3; cursor: default; }
+/* Dots */
+.ea-carousel-dots {
+    display: flex; justify-content: center; gap: .5rem; margin-top: 1.5rem;
+}
+.ea-carousel-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(255,255,255,.25); border: none; cursor: pointer;
+    transition: background .2s, transform .2s; padding: 0;
+}
+.ea-carousel-dot.active { background: #6366f1; transform: scale(1.3); }
+.ea-past-card-label {
+    font-size: 1rem;
+}
+.ea-carousel-btn {
+    width: 48px; height: 48px; font-size: 1rem;
+}
 
 /* ── FAQ ── */
 .ea-faq {
@@ -343,25 +387,42 @@ include('assets/php/header.php');
         <h2 class="ea-section-title">¿Ya viste las entregas pasadas?</h2>
         <p class="ea-section-sub">Momentos que quedaron grabados en la historia de nuestra comunidad.</p>
     </div>
-    <div class="ea-past-cards">
-        <!-- Tarjeta 1 — reemplaza con foto real -->
-        <div class="ea-past-card">
-            <div class="ea-past-card-placeholder"><i class="fas fa-images" style="font-size:2rem;"></i></div>
-            <div class="ea-past-card-overlay"></div>
-            <div class="ea-past-card-label">ENTREGA DE ANUARIO<br>2023-2024</div>
+    <div class="ea-carousel-wrap">
+        <button class="ea-carousel-btn prev" id="eaPrev" onclick="eaSlide(-1)" aria-label="Anterior">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="ea-carousel">
+            <div class="ea-carousel-track" id="eaTrack">
+                <!-- Tarjeta 1 -->
+                <div class="ea-past-card">
+                    <div class="ea-past-card-inner">
+                        <div class="ea-past-card-placeholder"><i class="fas fa-images" style="font-size:2rem;"></i></div>
+                        <div class="ea-past-card-overlay"></div>
+                        <div class="ea-past-card-label">ENTREGA DE ANUARIO<br>2023-2024</div>
+                    </div>
+                </div>
+                <!-- Tarjeta 2 -->
+                <div class="ea-past-card">
+                    <div class="ea-past-card-inner">
+                        <div class="ea-past-card-placeholder"><i class="fas fa-images" style="font-size:2rem;"></i></div>
+                        <div class="ea-past-card-overlay"></div>
+                        <div class="ea-past-card-label">ENTREGA DE ANUARIO<br>2022-2023</div>
+                    </div>
+                </div>
+                <!-- Tarjeta 3 -->
+                <div class="ea-past-card">
+                    <div class="ea-past-card-inner">
+                        <div class="ea-past-card-placeholder"><i class="fas fa-images" style="font-size:2rem;"></i></div>
+                        <div class="ea-past-card-overlay"></div>
+                        <div class="ea-past-card-label">ENTREGA<br>2022</div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <!-- Tarjeta 2 -->
-        <div class="ea-past-card">
-            <div class="ea-past-card-placeholder"><i class="fas fa-images" style="font-size:2rem;"></i></div>
-            <div class="ea-past-card-overlay"></div>
-            <div class="ea-past-card-label">ENTREGA DE ANUARIO<br>2022-2023</div>
-        </div>
-        <!-- Tarjeta 3 -->
-        <div class="ea-past-card">
-            <div class="ea-past-card-placeholder"><i class="fas fa-images" style="font-size:2rem;"></i></div>
-            <div class="ea-past-card-overlay"></div>
-            <div class="ea-past-card-label">ENTREGA<br>2022</div>
-        </div>
+        <button class="ea-carousel-btn next" id="eaNext" onclick="eaSlide(1)" aria-label="Siguiente">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        <div class="ea-carousel-dots" id="eaDots"></div>
     </div>
 </section>
 
@@ -459,6 +520,55 @@ include('assets/php/header.php');
 
     tick();
     setInterval(tick, 1000);
+})();
+
+/* ── Carousel ── */
+(function() {
+    const track  = document.getElementById('eaTrack');
+    const dots   = document.getElementById('eaDots');
+    const prev   = document.getElementById('eaPrev');
+    const next   = document.getElementById('eaNext');
+    if (!track) return;
+
+    const cards  = track.querySelectorAll('.ea-past-card');
+    const total  = cards.length;
+    let current  = 0;
+
+    function buildDots() {
+        dots.innerHTML = '';
+        for (let i = 0; i < total; i++) {
+            const d = document.createElement('button');
+            d.className = 'ea-carousel-dot' + (i === current ? ' active' : '');
+            d.addEventListener('click', () => goTo(i));
+            dots.appendChild(d);
+        }
+    }
+
+    function goTo(idx) {
+        current = Math.max(0, Math.min(idx, total - 1));
+        // 78% card width + 1.5rem gap ≈ 1.5rem = 24px
+        const cardW = cards[0].offsetWidth;
+        const offset = current * cardW + (current * 12) - (track.parentElement.offsetWidth - cardW) / 2;
+        track.style.transform = `translateX(${-Math.max(0, offset)}px)`;
+        cards.forEach((c, i) => c.classList.toggle('active-slide', i === current));
+        dots.querySelectorAll('.ea-carousel-dot').forEach((d, i) => d.classList.toggle('active', i === current));
+        prev.disabled = current === 0;
+        next.disabled = current >= total - 1;
+    }
+
+    window.eaSlide = function(dir) { goTo(current + dir); resetTimer(); };
+
+    // Auto-advance cada 30 segundos
+    let timer = setInterval(() => goTo(current + 1 < total ? current + 1 : 0), 10000);
+    function resetTimer() {
+        clearInterval(timer);
+        timer = setInterval(() => goTo(current + 1 < total ? current + 1 : 0), 10000    );
+    }
+    // Reiniciar timer al hacer click en dots
+    dots.addEventListener('click', resetTimer);
+
+    buildDots();
+    goTo(0);
 })();
 
 /* ── FAQ accordion ── */
