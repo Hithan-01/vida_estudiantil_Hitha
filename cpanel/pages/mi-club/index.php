@@ -524,12 +524,14 @@ $galeria = array_filter(array_map(function($img) {
     <?php $temp->scripts() ?>
     
     <script>
+        const SITE_URL = '<?php echo $temp->siteURL; ?>';
+
         function editarClub() {
-            window.location.href = '/cpanel/pages/mi-club/editar';
+            window.location.href = SITE_URL + 'pages/mi-club/editar';
         }
-        
+
         function gestionarDirectiva() {
-            window.location.href = '/cpanel/pages/mi-club/directiva';
+            window.location.href = SITE_URL + 'pages/mi-club/directiva';
         }
     </script>
 </body>

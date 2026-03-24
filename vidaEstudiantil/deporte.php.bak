@@ -1,9 +1,8 @@
 <?php
 $titulo = 'Deporte';
 $paginaActiva = 'deportes';
-
-// Cargar configuración global
-require_once('../config.php');
+$siteURL = '/vida_estudiantil_Hitha/';
+$portalURL = $siteURL . 'vidaEstudiantil/';
 
 include('assets/php/header.php');
 include('../cpanel/assets/API/db.php');

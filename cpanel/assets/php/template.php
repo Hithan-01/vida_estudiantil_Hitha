@@ -1,7 +1,28 @@
 <?php
+// Cargar configuración global si no está cargada
+if (!defined('SITE_URL')) {
+    require_once(__DIR__ . '/../../../config.php');
+}
+
 class Conexion extends mysqli {
     public function __construct(){
-        parent::__construct('localhost','root','root','pruebasumadmin',8889);
+        // Detectar ambiente (local vs producción)
+        $is_local = (
+            isset($_SERVER['HTTP_HOST']) && (
+                $_SERVER['HTTP_HOST'] === 'localhost' ||
+                $_SERVER['HTTP_HOST'] === 'localhost:8888' ||
+                strpos($_SERVER['HTTP_HOST'], 'localhost:') === 0
+            )
+        );
+
+        if ($is_local) {
+            // CONFIGURACIÓN LOCAL (MAMP)
+            parent::__construct('localhost','root','root','pruebasumadmin',8889);
+        } else {
+            // CONFIGURACIÓN PRODUCCIÓN (VPS)
+            parent::__construct('localhost','vidaestudiantil','VidaUM2026Secure','vida_estudiantil');
+        }
+
         if ($this->connect_errno) {
             die(' Error con la conexión: '.$this->connect_error);
         }
@@ -12,10 +33,10 @@ class Conexion extends mysqli {
     public function rows($y){
         return mysqli_num_rows($y);
     }
-    
+
 }
 class Template {
-    public $siteURL = "/vida_estudiantil_Hitha/cpanel/";
+    public $siteURL;
     public $titulo;
     public $usuario_id;
     public $usuario_nombre;
@@ -26,6 +47,7 @@ class Template {
 
     public function __construct($titulo = "Inicio") {
         $this->titulo = $titulo;
+        $this->siteURL = defined('CPANEL_URL') ? CPANEL_URL : '/vida_estudiantil_Hitha/cpanel/';
         $this->db = new Conexion();
     }
 
@@ -321,7 +343,7 @@ class Template {
                             <div class="col-6 pe-1 ps-1">
                                 <ul class="list-unstyled">
                                     <li>
-                                        <a href="<?php echo $this->siteURL ?>configuracion/password/">Contraseña</a>
+                                        <a href="<?php echo $this->siteURL ?>pages/configuracion/password/">Contraseña</a>
                                     </li>
                                 </ul>
                             </div>
@@ -341,7 +363,7 @@ class Template {
                             <div class="col-6 ps-1 pe-1">
                                 <ul class="list-unstyled">
                                     <li>
-                                        <a href="<?php echo $this->siteURL ?>configuracion/cargos/">Cargos</a>
+                                        <a href="<?php echo $this->siteURL ?>pages/configuracion/cargos/">Cargos</a>
                                     </li>
                                 </ul>
                             </div>
@@ -462,13 +484,13 @@ class Template {
                         if (!$this->es_director_club() && !$this->es_director_ministerio()) {
                         ?>
                         <li>
-                            <a href="<?php echo $this->siteURL ?>anuarios/admin/">
+                            <a href="<?php echo $this->siteURL ?>pages/anuarios/admin/">
                                 <i class="fa-solid fa-book icon" data-acorn-size="18"></i>
                                 <span class="label">Anuarios Admin</span>
                             </a>
                         </li>
                         <li>
-                            <a href="<?php echo $this->siteURL ?>pulso/equipo">
+                            <a href="<?php echo $this->siteURL ?>pages/pulso/equipo">
                                 <i class="fa-solid fa-users icon" data-acorn-size="18"></i>
                                 <span class="label">Pulso - Equipo</span>
                             </a>
@@ -480,19 +502,19 @@ class Template {
                             </a>
                             <ul id="federacion">
                                 <li>
-                                    <a href="<?php echo $this->siteURL ?>federacion/miembros">
+                                    <a href="<?php echo $this->siteURL ?>pages/federacion/miembros">
                                         <span class="label">Miembros</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="<?php echo $this->siteURL ?>federacion/informacion">
+                                    <a href="<?php echo $this->siteURL ?>pages/federacion/informacion">
                                         <span class="label">Información</span>
                                     </a>
                                 </li>
                             </ul>
                         </li>
                         <li>
-                            <a href="<?php echo $this->siteURL ?>repositorio/">
+                            <a href="<?php echo $this->siteURL ?>pages/repositorio/">
                                 <i class="fa-solid fa-camera icon" data-acorn-size="18"></i>
                                 <span class="label">Repositorio</span>
                             </a>
@@ -621,19 +643,9 @@ class Template {
                             // Agregar Galería (módulo independiente)
                             if($this->tiene_permiso('galeria', 'ver')) {
                                 echo '<li>';
-                                echo '<a href="' . $this->siteURL . 'galeria/">';
+                                echo '<a href="' . $this->siteURL . 'pages/galeria/">';
                                 echo '<i data-acorn-icon="image" class="icon" data-acorn-size="18"></i>';
                                 echo '<span class="label">Galería</span>';
-                                echo '</a>';
-                                echo '</li>';
-                            }
-
-                            // Video Hero - visible para superusuarios y administradores
-                            if($this->usuario_categoria <= 2) {
-                                echo '<li>';
-                                echo '<a href="' . $this->siteURL . 'pages/vida-estudiantil/video-hero.php">';
-                                echo '<i class="fas fa-film icon" data-acorn-size="18"></i>';
-                                echo '<span class="label">Video Hero</span>';
                                 echo '</a>';
                                 echo '</li>';
                             }
@@ -648,7 +660,7 @@ class Template {
 
                             // Password - todos los usuarios
                             echo '<li>';
-                            echo '<a href="' . $this->siteURL . 'configuracion/password/">';
+                            echo '<a href="' . $this->siteURL . 'pages/configuracion/password/">';
                             echo '<i data-acorn-icon="lock-on" class="icon" data-acorn-size="14"></i>';
                             echo '<span class="label">Contraseña</span>';
                             echo '</a>';

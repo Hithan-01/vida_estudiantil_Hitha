@@ -1,84 +1,11 @@
 <?php
 $titulo = 'Anuarios Institucionales';
 $paginaActiva = 'anuarios';
-$siteURL = '/cpanel/cpanel_Hithan-main/';
-$portalURL = $siteURL . 'vidaEstudiantil/';
+
+// Cargar configuración global
+require_once('../config.php');
 
 include('assets/php/header.php');
-?>
-
-<!-- ── Muro de autenticación Google ── -->
-<div id="authWall" style="position:fixed;inset:0;z-index:99999;background:rgba(20,20,40,0.97);display:flex;align-items:center;justify-content:center;padding:1rem;">
-    <div class="card shadow-lg border-0 text-center px-5 py-5" style="max-width:440px;width:100%;border-radius:1.5rem;">
-        <div class="mb-4">
-            <div style="width:72px;height:72px;background:linear-gradient(135deg,#344767,#5e72e4);border-radius:1rem;display:flex;align-items:center;justify-content:center;margin:0 auto;">
-                <i class="fas fa-book-open fa-2x text-white"></i>
-            </div>
-        </div>
-        <h4 class="font-weight-bolder mb-2">Anuarios Institucionales</h4>
-        <p class="text-secondary mb-4" style="font-size:.875rem;line-height:1.6;">
-            Esta sección es exclusiva para la comunidad universitaria.<br>
-            Inicia sesión con tu cuenta de Google para continuar.
-        </p>
-        <!-- Botón oficial de Google -->
-        <div id="googleBtnAnuarios" class="d-flex justify-content-center mb-3"></div>
-        <!-- Botón de respaldo por si el SDK tarda -->
-        <button id="btnGSIFallback"
-                style="display:none;border:1px solid #dadce0;border-radius:4px;background:#fff;padding:10px 24px;font-size:.9rem;cursor:pointer;align-items:center;gap:10px;justify-content:center;width:100%;max-width:300px;margin:0 auto;"
-                onclick="if(typeof google!=='undefined' && google.accounts)google.accounts.id.prompt();">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" alt="Google">
-            Iniciar sesión con Google
-        </button>
-        <p class="text-muted mt-3 mb-0" style="font-size:.78rem;">
-            <i class="fas fa-shield-alt me-1 text-primary"></i>Acceso restringido — Universidad de Monterrey
-        </p>
-    </div>
-</div>
-
-<script>
-(function() {
-    var wall = document.getElementById('authWall');
-
-    // Si ya hay sesión activa, ocultar muro de inmediato
-    if (sessionStorage.getItem('google_credential')) {
-        wall.style.display = 'none';
-        return;
-    }
-
-    // Callback que oculta el muro al iniciar sesión
-    var _orig = window.handleGoogleSignIn;
-    window.handleGoogleSignIn = function(response) {
-        if (_orig) _orig(response);
-        if (wall) wall.style.display = 'none';
-    };
-
-    function renderBtn() {
-        if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
-            // Re-inicializar con el callback actualizado
-            google.accounts.id.initialize({
-                client_id: '<?php echo GOOGLE_CLIENT_ID; ?>',
-                callback: window.handleGoogleSignIn,
-                cancel_on_tap_outside: false
-            });
-            var container = document.getElementById('googleBtnAnuarios');
-            google.accounts.id.renderButton(container, {
-                theme: 'outline', size: 'large', width: 300, text: 'signin_with'
-            });
-            // Si el iframe de Google no aparece en 2s, mostrar botón de respaldo
-            setTimeout(function() {
-                if (!container.querySelector('iframe')) {
-                    document.getElementById('btnGSIFallback').style.display = 'flex';
-                }
-            }, 2000);
-        } else {
-            setTimeout(renderBtn, 200);
-        }
-    }
-    renderBtn();
-})();
-</script>
-
-<?php
 include('../cpanel/assets/API/db.php');
 $db = new Conexion();
 

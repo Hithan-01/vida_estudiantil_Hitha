@@ -468,7 +468,7 @@ $galeria_existente = array_filter(array_map(function($img) {
                     
                     // Redireccionar después de 2 segundos
                     setTimeout(() => {
-                        window.location.href = '/cpanel/pages/mi-ministerio/';
+                        window.location.href = siteURL + 'pages/mi-ministerio/';
                     }, 2000);
                 } else {
                     jQuery.notify({

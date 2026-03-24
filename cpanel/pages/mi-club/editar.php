@@ -491,7 +491,7 @@ $galeria_existente = array_values(array_filter(array_map(function($img) {
                     
                     // Redireccionar después de 2 segundos
                     setTimeout(() => {
-                        window.location.href = '/cpanel/pages/mi-club/';
+                        window.location.href = siteURL + 'pages/mi-club/';
                     }, 2000);
                 } else {
                     jQuery.notify({

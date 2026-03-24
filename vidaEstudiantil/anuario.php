@@ -3,8 +3,9 @@ session_start();
 
 $titulo = 'Anuario';
 $paginaActiva = 'anuarios';
-$siteURL = '/Vida%20Estudiantil/';
-$portalURL = $siteURL . 'vidaEstudiantil/';
+
+// Cargar configuración global
+require_once('../config.php');
 
 include('../cpanel/assets/API/db.php');
 $db = new Conexion();
@@ -28,15 +29,8 @@ $titulo = $anuario['TITULO'];
 $fotografos     = !empty($anuario['FOTOGRAFOS'])    ? array_map('trim', explode(',', $anuario['FOTOGRAFOS']))    : [];
 $contribuyentes = !empty($anuario['CONTRIBUYENTES']) ? array_map('trim', explode(',', $anuario['CONTRIBUYENTES'])) : [];
 
-// Normalizar URL relativa: asegura que empiece con /Vida%20Estudiantil/
+// Obtener URL del PDF (ya viene correcta de la BD)
 $pdfUrl = $anuario['PDF_URL'] ?? '';
-if ($pdfUrl !== '' && !str_starts_with($pdfUrl, 'http')) {
-    $base = '/Vida%20Estudiantil';
-    // Si ya tiene el prefijo correcto, dejarlo; si no, agregarlo
-    if (!str_starts_with($pdfUrl, $base . '/')) {
-        $pdfUrl = $base . '/' . ltrim($pdfUrl, '/');
-    }
-}
 
 include('assets/php/header.php');
 ?>
@@ -62,7 +56,7 @@ include('assets/php/header.php');
             Iniciar sesión con Google
         </button>
         <p class="text-muted mt-3 mb-0" style="font-size:.78rem;">
-            <i class="fas fa-shield-alt me-1 text-primary"></i>Acceso restringido — Universidad de Monterrey
+            <i class="fas fa-shield-alt me-1 text-primary"></i>Acceso restringido — Universidad de Montemorelos
         </p>
     </div>
 </div>

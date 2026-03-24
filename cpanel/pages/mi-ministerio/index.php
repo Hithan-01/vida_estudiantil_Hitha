@@ -426,12 +426,14 @@ $galeria = array_filter(array_map(function($img) {
     <?php $temp->scripts() ?>
     
     <script>
+        const SITE_URL = '<?php echo $temp->siteURL; ?>';
+
         function editarMinisterio() {
-            window.location.href = '/cpanel/pages/mi-ministerio/editar?id=<?php echo $ministerio['ID']; ?>';
+            window.location.href = SITE_URL + 'pages/mi-ministerio/editar?id=<?php echo $ministerio['ID']; ?>';
         }
-        
+
         function gestionarDirectiva() {
-            window.location.href = '/cpanel/pages/mi-ministerio/directiva?id=<?php echo $ministerio['ID']; ?>';
+            window.location.href = SITE_URL + 'pages/mi-ministerio/directiva?id=<?php echo $ministerio['ID']; ?>';
         }
     </script>
 </body>

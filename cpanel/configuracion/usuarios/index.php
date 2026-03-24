@@ -1,5 +1,7 @@
 <?php
 // Redirigir a la ubicación correcta
-header('Location: /cpanel/pages/configuracion/usuarios/');
+require_once(__DIR__ . '/../../assets/php/template.php');
+$temp = new Template();
+header('Location: ' . $temp->siteURL . 'pages/configuracion/usuarios/');
 exit();
 ?>
