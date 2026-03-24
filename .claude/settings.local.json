@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -Command \"dir ''C:\\\\wamp64\\\\www'' | Format-Table Name, Attributes, LinkType -AutoSize\")"
+    ]
+  }
+}
