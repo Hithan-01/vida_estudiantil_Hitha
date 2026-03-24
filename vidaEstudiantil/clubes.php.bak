@@ -1,9 +1,8 @@
 <?php
 $titulo = 'Clubes';
 $paginaActiva = 'clubes';
-
-// Cargar configuración global
-require_once('../config.php');
+$siteURL = '/vida_estudiantil_Hitha/';
+$portalURL = $siteURL . 'vidaEstudiantil/';
 
 include('assets/php/header.php');
 include('../cpanel/assets/API/db.php');
@@ -15,50 +14,13 @@ $sql = $db->query("SELECT ID, NOMBRE, DESCRIPCION, IMAGEN_URL, RESPONSABLE_NOMBR
 while ($r = $db->recorrer($sql)) $clubes[] = $r;
 ?>
 
-<!-- Page Header con Colores de Clubes Amarillos -->
-<div class="position-relative overflow-hidden" style="background: linear-gradient(135deg, #fbda20 0%, #f5a623 100%); padding: 5rem 0 4rem;">
-    <!-- Patrón de fondo sutil -->
-    <div class="position-absolute top-0 start-0 w-100 h-100" style="opacity: 0.1; background-image: url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%23ffffff\" fill-opacity=\"1\"%3E%3Cpath d=\"M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
-
-    <div class="container position-relative">
-        <div class="row align-items-center">
-            <!-- Título y Logo -->
-            <div class="col-lg-8">
-                <div class="d-flex align-items-start mb-4">
-                    <!-- Icono de Clubes -->
-                    <div class="me-4" style="min-width: 100px;">
-                        <div class="d-flex align-items-center justify-content-center rounded-circle"
-                             style="width: 100px; height: 100px; background: rgba(255,255,255,0.3); backdrop-filter: blur(10px); border: 3px solid rgba(255,255,255,0.4);">
-                            <i class="fas fa-users" style="font-size: 3rem; color: #156fb5;"></i>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h1 class="font-weight-bolder mb-2" style="font-size: 2.8rem; line-height: 1.2; color: #156fb5;">
-                            Clubes Estudiantiles
-                        </h1>
-                        <p class="mb-3" style="font-size: 1.15rem; color: #156fb5; opacity: 0.95;">
-                            Encuentra el club perfecto para ti y forma parte de una comunidad increíble
-                        </p>
-                        <div class="d-flex gap-2 flex-wrap">
-                            <span class="badge px-3 py-2" style="background: rgba(21, 111, 181, 0.15); color: #156fb5; border: 1px solid rgba(21, 111, 181, 0.3); font-weight: 600;">
-                                <i class="fas fa-users me-1"></i><?php echo count($clubes); ?> Clubes Activos
-                            </span>
-                            <span class="badge px-3 py-2" style="background: rgba(21, 111, 181, 0.1); color: #156fb5; font-weight: 600;">
-                                <i class="fas fa-star me-1"></i>Clubes Estudiantiles UM
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Wave separador -->
-    <div class="position-absolute bottom-0 start-0 w-100" style="transform: translateY(1px);">
-        <svg viewBox="0 0 1440 120" xmlns="http://www.w3.org/2000/svg" style="display: block;">
-            <path fill="#f8f9fa" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"/>
-        </svg>
+<!-- Page Header -->
+<div style="background:linear-gradient(135deg,#5e72e4,#825ee4);padding:3rem 0;color:#fff;margin-bottom:0;">
+    <div class="container">
+        <h1 style="font-size:2.25rem;font-weight:800;margin-bottom:.5rem;">
+            <i class="fas fa-users me-3"></i>Clubes Estudiantiles
+        </h1>
+        <p style="opacity:.9;margin:0;">Encuentra el club perfecto para ti y forma parte de una comunidad increíble</p>
     </div>
 </div>
 
@@ -66,8 +28,8 @@ while ($r = $db->recorrer($sql)) $clubes[] = $r;
     <div class="container">
         <?php if (empty($clubes)): ?>
             <div class="text-center py-5">
-                <div class="icon icon-shape shadow mx-auto mb-4" style="width: 100px; height: 100px; background: linear-gradient(135deg, #fbda20 0%, #f5a623 100%); border-radius: 20px;">
-                    <i class="fas fa-users opacity-10" style="font-size: 3rem; line-height: 100px; color: #156fb5;"></i>
+                <div class="icon icon-shape shadow mx-auto mb-4" style="width: 100px; height: 100px; background: #156fb5;">
+                    <i class="fas fa-users text-white opacity-10" style="font-size: 3rem; line-height: 100px;"></i>
                 </div>
                 <h4 class="text-muted">No hay clubes disponibles por el momento</h4>
                 <p class="text-secondary">Pronto habrán nuevos clubes disponibles para ti</p>
@@ -90,9 +52,9 @@ while ($r = $db->recorrer($sql)) $clubes[] = $r;
                                      onmouseover="this.style.transform='scale(1.08)'"
                                      onmouseout="this.style.transform='scale(1)'">
                             <?php else: ?>
-                                <!-- Gradiente de respaldo con colores amarillos -->
-                                <div class="w-100 h-100 d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #fbda20 0%, #f5a623 100%);">
-                                    <i class="fas fa-users" style="font-size: 5rem; color: #156fb5; opacity: 0.4;"></i>
+                                <!-- Gradiente de respaldo con colores del logo -->
+                                <div class="w-100 h-100 d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #156fb5 0%, #0d5491 100%);">
+                                    <i class="fas fa-users" style="font-size: 5rem; color: #fbda20; opacity: 0.4;"></i>
                                 </div>
                             <?php endif; ?>
 
@@ -100,10 +62,10 @@ while ($r = $db->recorrer($sql)) $clubes[] = $r;
                             <div class="position-absolute top-0 start-0 w-100 h-100"
                                  style="background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0.7) 100%);"></div>
 
-                            <!-- Badge flotante -->
+                            <!-- Badge flotante con colores del logo -->
                             <div class="position-absolute top-0 start-0 m-3">
                                 <span class="badge px-3 py-2 shadow" style="background: #fbda20; color: #156fb5; font-size: 0.75rem; font-weight: 700;">
-                                    <i class="fas fa-users me-1"></i>Club
+                                    <i class="fas fa-users me-1"></i>Club Estudiantil
                                 </span>
                             </div>
                         </div>
@@ -126,8 +88,8 @@ while ($r = $db->recorrer($sql)) $clubes[] = $r;
                             <div class="mb-3">
                                 <?php if (!empty($club['HORARIO'])): ?>
                                 <div class="d-flex align-items-center mb-2">
-                                    <div class="icon icon-xs shadow text-center border-radius-md me-2" style="width: 28px; height: 28px; background: #fbda20;">
-                                        <i class="fas fa-clock" style="font-size: 0.7rem; line-height: 28px; color: #156fb5;"></i>
+                                    <div class="icon icon-xs shadow text-center border-radius-md me-2" style="width: 28px; height: 28px; background: #156fb5;">
+                                        <i class="fas fa-clock text-white" style="font-size: 0.7rem; line-height: 28px;"></i>
                                     </div>
                                     <p class="text-xs text-secondary mb-0 font-weight-500">
                                         <?php echo htmlspecialchars($club['HORARIO']); ?>
@@ -137,8 +99,8 @@ while ($r = $db->recorrer($sql)) $clubes[] = $r;
 
                                 <?php if (!empty($club['LUGAR'])): ?>
                                 <div class="d-flex align-items-center mb-2">
-                                    <div class="icon icon-xs shadow text-center border-radius-md me-2" style="width: 28px; height: 28px; background: #fbda20;">
-                                        <i class="fas fa-map-marker-alt" style="font-size: 0.7rem; line-height: 28px; color: #156fb5;"></i>
+                                    <div class="icon icon-xs shadow text-center border-radius-md me-2" style="width: 28px; height: 28px; background: #156fb5;">
+                                        <i class="fas fa-map-marker-alt text-white" style="font-size: 0.7rem; line-height: 28px;"></i>
                                     </div>
                                     <p class="text-xs text-secondary mb-0 font-weight-500">
                                         <?php echo htmlspecialchars($club['LUGAR']); ?>
@@ -152,15 +114,15 @@ while ($r = $db->recorrer($sql)) $clubes[] = $r;
                                         <i class="fas fa-user" style="font-size: 0.7rem; line-height: 28px; color: #156fb5;"></i>
                                     </div>
                                     <p class="text-xs text-secondary mb-0 font-weight-500">
-                                        <strong style="color: #fbda20;">Director:</strong> <?php echo htmlspecialchars($club['RESPONSABLE_NOMBRE']); ?>
+                                        <strong style="color: #156fb5;">Director:</strong> <?php echo htmlspecialchars($club['RESPONSABLE_NOMBRE']); ?>
                                     </p>
                                 </div>
                                 <?php endif; ?>
                             </div>
 
-                            <!-- Botón de acción con colores amarillos -->
+                            <!-- Botón de acción con colores del logo -->
                             <a href="<?php echo $portalURL; ?>club/<?php echo $club['ID']; ?>"
-                               class="btn w-100 font-weight-bold mb-0 shadow-sm btn-club">
+                               class="btn w-100 font-weight-bold mb-0 shadow-sm btn-club-doulos">
                                 Ver detalles <i class="fas fa-arrow-right ms-2"></i>
                             </a>
                         </div>
@@ -172,29 +134,28 @@ while ($r = $db->recorrer($sql)) $clubes[] = $r;
     </div>
 </main>
 
-<!-- Estilos adicionales con colores de Clubes Amarillos -->
+<!-- Estilos adicionales con colores Ministerio Doulos -->
 <style>
-    /* Colores de clubes: Amarillo #fbda20 y Dorado #f5a623 */
+    /* Colores del logo: Azul #156fb5 y Amarillo #fbda20 */
     .card:hover {
         transform: translateY(-8px) !important;
-        box-shadow: 0 20px 40px rgba(251, 218, 32, 0.35) !important;
+        box-shadow: 0 20px 40px rgba(21, 101, 192, 0.25) !important;
     }
 
-    /* Botón con colores amarillos */
-    .btn-club {
-        background: linear-gradient(135deg, #fbda20 0%, #f5a623 100%);
-        color: #156fb5;
+    /* Botón con colores del logo */
+    .btn-club-doulos {
+        background: linear-gradient(135deg, #156fb5 0%, #0d5491 100%);
+        color: white;
         border: 2px solid transparent;
         transition: all 0.3s ease;
-        font-weight: 700;
     }
 
-    .btn-club:hover {
+    .btn-club-doulos:hover {
         background: white;
-        color: #fbda20;
-        border: 2px solid #fbda20;
+        color: #156fb5;
+        border: 2px solid #156fb5;
         transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(251, 218, 32, 0.5);
+        box-shadow: 0 8px 20px rgba(21, 101, 192, 0.3);
     }
 
     .icon-xs {

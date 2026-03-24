@@ -1,8 +1,9 @@
 <?php
 $titulo = 'Entrega de Anuarios 2025-2026';
 $paginaActiva = 'entrega-anuarios';
-$siteURL = '/Vida%20Estudiantil/';
-$portalURL = $siteURL . 'vidaEstudiantil/';
+
+// Cargar configuración global
+require_once('../config.php');
 
 include('assets/php/header.php');
 ?>

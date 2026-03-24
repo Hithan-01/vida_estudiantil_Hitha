@@ -3,7 +3,20 @@ class Conexion extends mysqli {
     public $mostrarErrores = TRUE;
 
     public function __construct(){
-        parent::__construct('localhost','root','','pruebasumadmin',3306);
+        // Detectar ambiente (local vs producción)
+        $is_local = (
+            $_SERVER['HTTP_HOST'] === 'localhost' ||
+            $_SERVER['HTTP_HOST'] === 'localhost:8888' ||
+            strpos($_SERVER['HTTP_HOST'], 'localhost:') === 0
+        );
+
+        if ($is_local) {
+            // CONFIGURACIÓN LOCAL (MAMP)
+            parent::__construct('localhost','root','root','pruebasumadmin',8889);
+        } else {
+            // CONFIGURACIÓN PRODUCCIÓN (VPS)
+            parent::__construct('localhost','vidaestudiantil','VidaUM2026Secure','vida_estudiantil');
+        }
 
         if ($this->connect_errno) {
             die("❌ Error de conexión: " . $this->connect_error);

@@ -18,6 +18,24 @@ if (!$temp->validate_session(2)) { // Solo admin o superior
             box-shadow: 0 2px 10px rgba(0,0,0,0.08);
             border-radius: 15px;
         }
+
+        /* Mejorar apariencia de Select2 tags */
+        .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice {
+            background-color: #5e72e4 !important;
+            border-color: #5e72e4 !important;
+            color: #fff !important;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice__remove {
+            color: #fff !important;
+            margin-right: 5px;
+        }
+
+        .select2-container--bootstrap4 .select2-selection--multiple .select2-selection__choice__remove:hover {
+            color: #ffd !important;
+        }
     </style>
 </head>
 
@@ -180,8 +198,44 @@ if (!$temp->validate_session(2)) { // Solo admin o superior
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">URL de Imagen de Portada</label>
-                            <input type="url" class="form-control" id="form-imagen-portada" placeholder="https://...">
+                            <label class="form-label">Imagen de Portada</label>
+                            <div class="mb-2">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="portadaOption" id="portadaOptionUrl" value="url" checked>
+                                    <label class="form-check-label" for="portadaOptionUrl">
+                                        Usar URL
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="portadaOption" id="portadaOptionFile" value="file">
+                                    <label class="form-check-label" for="portadaOptionFile">
+                                        Subir imagen
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- URL Option -->
+                            <div id="portadaUrlSection">
+                                <input type="url" class="form-control" id="form-imagen-portada-url" placeholder="https://...">
+                                <small class="text-muted">URL de la imagen de portada</small>
+                            </div>
+
+                            <!-- File Upload Option -->
+                            <div id="portadaFileSection" style="display: none;">
+                                <input type="file" class="form-control" id="form-portada-file" accept="image/jpeg,image/jpg,image/png,image/webp">
+                                <small class="text-muted">Selecciona una imagen JPG, PNG o WebP (máx. 10MB)</small>
+                                <div id="portadaUploadProgress" style="display: none;" class="mt-2">
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <!-- Preview de la imagen -->
+                                <div id="portadaPreview" class="mt-2" style="display: none;">
+                                    <img id="portadaPreviewImg" src="" alt="Preview" class="img-thumbnail" style="max-height: 200px;">
+                                </div>
+                            </div>
+
+                            <input type="hidden" id="form-portada-final-url">
                         </div>
 
                         <div class="mb-3">
@@ -354,6 +408,12 @@ if (!$temp->validate_session(2)) { // Solo admin o superior
             $('#anuarioForm')[0].reset();
             $('#form-id').val('');
             $('#form-fotografos').val([]).trigger('change'); // Limpiar select2 de fotógrafos
+
+            // Reset opciones de PDF y Portada
+            $('#pdfOptionUrl').prop('checked', true).trigger('change');
+            $('#portadaOptionUrl').prop('checked', true).trigger('change');
+            $('#portadaPreview').hide();
+
             $('#anuarioModal').modal('show');
         }
 
@@ -376,7 +436,11 @@ if (!$temp->validate_session(2)) { // Solo admin o superior
                         $('#form-conmemorativo').prop('checked', a.ES_CONMEMORATIVO === 'S');
                         $('#form-razon-conmemorativa').val(a.RAZON_CONMEMORATIVA);
                         $('#form-pdf-url').val(a.PDF_URL);
-                        $('#form-imagen-portada').val(a.IMAGEN_PORTADA);
+                        $('#form-imagen-portada-url').val(a.IMAGEN_PORTADA);
+
+                        // Configurar opciones de portada (siempre URL al editar)
+                        $('#portadaOptionUrl').prop('checked', true).trigger('change');
+                        $('#portadaPreview').hide();
 
                         // Cargar fotógrafos seleccionados (convertir string separado por comas en array)
                         if (a.FOTOGRAFOS) {
@@ -487,6 +551,50 @@ if (!$temp->validate_session(2)) { // Solo admin o superior
                 }
             }
 
+            // Manejar la imagen de portada
+            const portadaOption = $('input[name="portadaOption"]:checked').val();
+            let portadaUrl = '';
+
+            if (portadaOption === 'file') {
+                const portadaFileInput = document.getElementById('form-portada-file');
+                if (portadaFileInput.files && portadaFileInput.files.length > 0) {
+                    // Subir imagen de portada
+                    $('#saveBtn').text('Subiendo portada...');
+                    $('#portadaUploadProgress').show();
+
+                    const portadaFormData = new FormData();
+                    portadaFormData.append('portada', portadaFileInput.files[0]);
+
+                    try {
+                        const portadaResponse = await fetch(url + 'upload-portada.php', {
+                            method: 'POST',
+                            body: portadaFormData
+                        });
+
+                        const portadaResult = await portadaResponse.json();
+
+                        if (!portadaResult.success) {
+                            alert('Error al subir la portada: ' + portadaResult.message);
+                            $('#saveBtn').prop('disabled', false).text('Guardar');
+                            $('#portadaUploadProgress').hide();
+                            return;
+                        }
+
+                        portadaUrl = portadaResult.url;
+                        $('#portadaUploadProgress').hide();
+                    } catch (error) {
+                        console.error('Error al subir portada:', error);
+                        alert('Error al subir la imagen de portada: ' + error.message);
+                        $('#saveBtn').prop('disabled', false).text('Guardar');
+                        $('#portadaUploadProgress').hide();
+                        return;
+                    }
+                }
+            } else {
+                // Usar URL
+                portadaUrl = $('#form-imagen-portada-url').val();
+            }
+
             // Crear/actualizar anuario
             $('#saveBtn').text('Guardando...');
 
@@ -500,7 +608,7 @@ if (!$temp->validate_session(2)) { // Solo admin o superior
             formData.append('es_conmemorativo', $('#form-conmemorativo').is(':checked') ? 'S' : 'N');
             formData.append('razon_conmemorativa', $('#form-razon-conmemorativa').val());
             formData.append('pdf_url', pdfUrl);
-            formData.append('imagen_portada', $('#form-imagen-portada').val());
+            formData.append('imagen_portada', portadaUrl);
 
             // Convertir array de fotógrafos a string separado por comas
             const fotografosArray = $('#form-fotografos').val() || [];
@@ -590,7 +698,7 @@ if (!$temp->validate_session(2)) { // Solo admin o superior
             }
         });
 
-        // Toggle between URL and File upload
+        // Toggle between URL and File upload for PDF
         $('input[name="pdfOption"]').on('change', function() {
             if ($(this).val() === 'url') {
                 $('#urlSection').show();
@@ -602,6 +710,33 @@ if (!$temp->validate_session(2)) { // Solo admin o superior
                 $('#fileSection').show();
                 $('#form-pdf-url').prop('required', false);
                 $('#form-pdf-file').prop('required', true);
+            }
+        });
+
+        // Toggle between URL and File upload for Portada
+        $('input[name="portadaOption"]').on('change', function() {
+            if ($(this).val() === 'url') {
+                $('#portadaUrlSection').show();
+                $('#portadaFileSection').hide();
+                $('#portadaPreview').hide();
+            } else {
+                $('#portadaUrlSection').hide();
+                $('#portadaFileSection').show();
+            }
+        });
+
+        // Preview de la imagen de portada al seleccionar archivo
+        $('#form-portada-file').on('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.match('image.*')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    $('#portadaPreviewImg').attr('src', event.target.result);
+                    $('#portadaPreview').show();
+                };
+                reader.readAsDataURL(file);
+            } else {
+                $('#portadaPreview').hide();
             }
         });
 

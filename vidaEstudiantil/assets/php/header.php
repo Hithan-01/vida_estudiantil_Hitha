@@ -1,7 +1,17 @@
 <?php
-// ── URLs base (ajustar si cambia el hosting) ──
-$siteURL   = '/Vida%20Estudiantil/cpanel/';          // Base del cpanel
-$portalURL = '/Vida%20Estudiantil/vidaEstudiantil/'; // Base del portal público
+// ── Usar configuración global si no está definida ──
+if (!defined('PORTAL_URL')) {
+    require_once(__DIR__ . '/../../../config.php');
+}
+if (!isset($siteURL)) {
+    $siteURL = SITE_URL;
+}
+if (!isset($portalURL)) {
+    $portalURL = PORTAL_URL;
+}
+if (!isset($cpanelURL)) {
+    $cpanelURL = CPANEL_URL;
+}
 
 // Google Sign-In Client ID — regístralo en Google Cloud Console
 define('GOOGLE_CLIENT_ID', '875058597883-dkfj1de8anmrhq44pup5mimv0lg7ag5n.apps.googleusercontent.com');
@@ -27,13 +37,19 @@ $paginaActiva = isset($paginaActiva) ? $paginaActiva : '';
     <!-- Portal custom overrides -->
     <link rel="stylesheet" href="<?php echo $portalURL; ?>assets/css/portal.css?v=<?php echo time(); ?>">
     <style>
-    /* Dropdown con fondo sólido blanco */
+    /* Aumentar z-index del navbar para que esté sobre todo */
+    .navbar.position-sticky {
+        z-index: 9999 !important;
+    }
+
+    /* Dropdown con fondo sólido blanco y z-index alto */
     .navbar .dropdown-menu {
         background: #fff !important;
         border: 1px solid #e2e8f0 !important;
         box-shadow: 0 8px 24px rgba(0,0,0,.12) !important;
         border-radius: .75rem !important;
         backdrop-filter: none !important;
+        z-index: 10000 !important;
     }
     .navbar .dropdown-item { color: #1e293b !important; font-size: .875rem; }
     .navbar .dropdown-item:hover,

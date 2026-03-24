@@ -1,4 +1,6 @@
 <?php
+$siteURL = '/vida_estudiantil_Hitha/';
+$portalURL = $siteURL . 'vidaEstudiantil/';
 
 include('../cpanel/assets/API/db.php');
 $db = new Conexion();
@@ -27,9 +29,6 @@ while ($g = $db->recorrer($sqlG)) $galeria[] = $g['IMAGEN_URL'];
 
 $titulo = $club['NOMBRE'];
 $paginaActiva = 'clubes';
-// Cargar configuración global
-require_once('../config.php');
-
 include('assets/php/header.php');
 ?>
 

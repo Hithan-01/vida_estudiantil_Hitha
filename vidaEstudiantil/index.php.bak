@@ -1,9 +1,8 @@
 <?php
 $titulo = 'Inicio';
 $paginaActiva = 'home';
-
-// Cargar configuración global
-require_once('../config.php');
+$siteURL = '/vida_estudiantil_Hitha/';
+$portalURL = $siteURL . 'vidaEstudiantil/';
 
 include('assets/php/header.php');
 
@@ -11,40 +10,32 @@ include('../cpanel/assets/API/db.php');
 $db = new Conexion();
 $hoy = date('Y-m-d');
 
-// ═══════════════════════════════════════════════════════════
-// CARGAR CONFIGURACIÓN DEL HOME desde VRE_HOME_CONFIG
-// ═══════════════════════════════════════════════════════════
-$homeConfig = [];
-$sqlConfig = $db->query("SELECT SECCION, CLAVE, VALOR, TIPO FROM VRE_HOME_CONFIG WHERE ACTIVO = 'S' ORDER BY SECCION, ORDEN");
-if ($sqlConfig && $db->rows($sqlConfig) > 0) {
-    while ($row = $sqlConfig->fetch_assoc()) {
-        $homeConfig[$row['SECCION']][$row['CLAVE']] = $row['VALOR'];
-    }
-}
-
-// ═══════════════════════════════════════════════════════════
-// VIDEO HERO - Desde configuración de base de datos
-// ═══════════════════════════════════════════════════════════
+// Video hero
+$heroVideoPath = __DIR__ . '/assets/videos/hero.mp4';
+$heroVideoWebm = __DIR__ . '/assets/videos/hero.webm';
+$heroUrlFile   = __DIR__ . '/assets/videos/hero-url.txt';
 $heroVideoURL  = null;
 $heroVideoType = null;
 $heroIsEmbed   = false;
-$usarVideo = ($homeConfig['hero']['usar_video'] ?? '0') === '1';
-
-if ($usarVideo) {
-    $videoUrl = trim($homeConfig['hero']['video_url'] ?? '');
-    if ($videoUrl !== '') {
+if (file_exists($heroVideoPath)) {
+    $heroVideoURL  = $portalURL . 'assets/videos/hero.mp4';
+    $heroVideoType = 'video/mp4';
+} elseif (file_exists($heroVideoWebm)) {
+    $heroVideoURL  = $portalURL . 'assets/videos/hero.webm';
+    $heroVideoType = 'video/webm';
+} elseif (file_exists($heroUrlFile)) {
+    $savedUrl = trim(file_get_contents($heroUrlFile));
+    if ($savedUrl !== '') {
         // Detectar YouTube
-        if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_\-]{11})/', $videoUrl, $m)) {
+        if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_\-]{11})/', $savedUrl, $m)) {
             $heroVideoURL  = 'https://www.youtube.com/embed/' . $m[1] . '?autoplay=1&mute=1&loop=1&playlist=' . $m[1];
             $heroIsEmbed   = true;
         } else {
-            // URL directa a MP4 u otro formato
-            $heroVideoURL  = $videoUrl;
+            $heroVideoURL  = $savedUrl;
             $heroVideoType = 'video/mp4';
         }
     }
 }
-
 $anio = date('Y');
 
 // Banners
